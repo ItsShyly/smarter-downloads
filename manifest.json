@@ -1,0 +1,33 @@
+{
+    "manifest_version": 3,
+    "name": "Automatic Download Path",
+    "version": "1.0",
+    "description": "Automatic Download Path Switcher",
+
+    "icons": {
+        "16": "icon/icon16.png",
+        "48": "icon/icon48.png",
+        "128": "icon/icon128.png"
+    },
+
+    "action": {
+        "default_icon": "icon/icon128.png"
+    },
+
+    "background": {
+        "service_worker": "js/background.js"
+    },
+
+    "options_page": "options.html",
+
+    "options_ui": {
+        "page": "options.html",
+        "open_in_tab": false
+    },
+
+    "permissions": ["downloads",  "storage"],
+
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'"
+    }
+}

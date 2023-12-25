@@ -1,0 +1,63 @@
+.cg-container {
+    width: 60vw;
+    height: 80vh;
+    display: grid;
+    grid-column-gap: 1rem;
+    grid-row-gap: 5rem;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+.cg-container .cg-others {
+    grid-column: span 2;
+    grid-row: 3 / 3;
+}
+
+.cg-element:hover {
+    border: 1px solid var(--primary);
+    box-shadow: 0 0 40px var(--primary);
+}
+
+.cg-element {
+    --x-px: calc(var(--x) * 1px);
+    --y-px: calc(var(--y) * 1px);
+    background-color: rgba(0, 0, 0, 0.2);
+    width: 500px;
+    height: 200px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    border: 1px solid rgba(0, 0, 0, 0);
+    overflow: hidden;
+}
+
+.cg-element:before,
+.cg-element:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    border-radius: inherit;
+    background: radial-gradient(
+        800px circle at var(--x-px) var(--y-px),
+        rgba(255, 255, 255, 0.09),
+        transparent 40%
+    );
+}
+
+.cg-element:before {
+    z-index: -1;
+}
+
+.cg-element:after {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.cg-element:hover:after {
+    opacity: 1;
+}
