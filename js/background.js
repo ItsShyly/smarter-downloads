@@ -1,9 +1,9 @@
-// Open the options page when the extension icon is clicked
-chrome.action.onClicked.addListener(function(tab) {
+// initial: Open options page
+chrome.action.onClicked.addListener(function (tab) {
   chrome.runtime.openOptionsPage();
 });
 
-// store folder variables (folder names)
+// initial: Store folder variables (folder names)
 let folderVariables = {
   folder1: 'Audios',
   folder2: 'Videos',
@@ -12,7 +12,7 @@ let folderVariables = {
   folderOthers: 'Others'
 };
 
-// bool for checkbox if filetypes should save in subfolders
+// initial: Bool for checkbox if file types should save in subfolders
 let folderFileTypesInSubfolder = {
   folder1: true,
   folder2: true,
@@ -21,6 +21,7 @@ let folderFileTypesInSubfolder = {
   folderOthers: false
 };
 
+// initial: Default file types for each folder
 let whichFileTypes = {
   folder1: ["mp3", "wav"],
   folder2: ["mp4", "mkv", "avi"],
@@ -28,92 +29,153 @@ let whichFileTypes = {
   folder4: ["gif"],
 };
 
-const fileTypes = {
+// initial: store the folderVariables names with filetypes from download path
+let fileTypes = {
   [folderVariables.folder1]: {},
   [folderVariables.folder2]: {},
   [folderVariables.folder3]: {},
   [folderVariables.folder4]: {},
 };
 
-// Populate fileTypes object with file extensions
+// initial: Populate fileTypes object with file extensions
 for (const folder in whichFileTypes) {
   whichFileTypes[folder].forEach(extension => {
     fileTypes[folderVariables[folder]][extension] = extension;
   });
 }
 
+// storage update: Function to update fileTypes based on folderVariables
+function updateFileTypes() {
+  fileTypes = {
+    [folderVariables.folder1]: {},
+    [folderVariables.folder2]: {},
+    [folderVariables.folder3]: {},
+    [folderVariables.folder4]: {},
+  };
+
+  // Populate fileTypes object with file extensions
+  for (const folder in whichFileTypes) {
+    whichFileTypes[folder].forEach(extension => {
+      fileTypes[folderVariables[folder]][extension] = extension;
+    });
+  }
+
+  console.log("storage update: Updated fileTypes:", fileTypes);
+}
+
+// initial: Function to initialize or update folder names and file types
+async function initializeOrRefreshData() {
+  await updateWhichFileTypes();
+
+  // initial: Call getFolderNames for initial setup
+  for (const folderName in folderVariables) {
+    await getFolderNamesPromise(folderName);
+  }
+
+  await updateFileTypes(); // storage update: Update fileTypes based on folderVariables
+}
+
+// storage update: Function to get folder names with a promise
+function getFolderNamesPromise(folderName) {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get([folderName], function (result) {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+      } else {
+        if (result[folderName] !== undefined) {
+          console.log("storage update: Retrieved new value for " + folderName + ": " + result[folderName]);
+          folderVariables[folderName] = result[folderName]; // Update the variable
+          console.log(folderVariables);
+          resolve();
+        } else {
+          console.log("storage update: Retrieved empty Storage for", folderName, "- use initial");
+          resolve();
+        }
+      }
+    });
+  });
+}
+
+// storage update: Function to update whichFileTypes based on custom file types
 function updateWhichFileTypes() {
-  chrome.storage.local.get(["customFileTypes"], function(result) {
+  chrome.storage.local.get(["customFileTypes"], function (result) {
     if (chrome.runtime.lastError) {
       console.error(chrome.runtime.lastError);
     } else {
       if (result.customFileTypes) {
-        console.log("Updating whichFileTypes with custom file types");
+        console.log("storage update: Updating whichFileTypes with custom file types");
         whichFileTypes = result.customFileTypes;
-        console.log("Updated whichFileTypes:", whichFileTypes);
+        console.log("storage update: Updated whichFileTypes:", whichFileTypes);
       } else {
-        console.log("No custom file types found in storage");
+        console.log("storage update: No custom file types found in storage");
       }
     }
   });
 }
 
+// storage update: Function to get folder names from storage
 function getFolderNames(folderName) {
-  chrome.storage.local.get([folderName], function(result) {
+  chrome.storage.local.get([folderName], function (result) {
     if (chrome.runtime.lastError) {
       console.error(chrome.runtime.lastError);
     } else {
       if (result[folderName] !== undefined) {
-        console.log("Retrieved new value for " + folderName + ": " + result[folderName]);
+        console.log("storage update: Retrieved new value for " + folderName + ": " + result[folderName]);
         folderVariables[folderName] = result[folderName]; // Update the variable
       } else {
-        console.log("Retrieved empty Storage for", folderName, "- use initial");
+        console.log("storage update: Retrieved empty Storage for", folderName, "- use initial");
       }
     }
   });
 }
 
-// Listen for changes in the storage
-chrome.storage.local.onChanged.addListener(function(changes, namespace) {
+// storage update: Listen for changes in the storage
+chrome.storage.local.onChanged.addListener(async function (changes, namespace) {
   for (const key in changes) {
     if (key === "customFileTypes") {
-      updateWhichFileTypes();
+      await updateWhichFileTypes();
+      await updateFileTypes(); // storage update: Update fileTypes when customFileTypes change
     } else {
-      getFolderNames(key);
+      await getFolderNamesPromise(key);
+      await updateFileTypes(); // storage update: Update fileTypes when folder names change
     }
   }
 });
 
-// Call updateWhichFileTypes for initial setup
+// initial: Call updateWhichFileTypes for initial setup
 updateWhichFileTypes();
 
-// Call getFolderNames for initial setup
+// initial: Call getFolderNames for initial setup
 for (const folderName in folderVariables) {
-  getFolderNames(folderName);
+  getFolderNamesPromise(folderName);
 }
 
-chrome.downloads.onDeterminingFilename.addListener(function(item, suggest) {
+// initial: Call initializeOrRefreshData for initial setup
+initializeOrRefreshData();
+
+// Function to handle download and suggest a filename
+chrome.downloads.onDeterminingFilename.addListener(function (item, suggest) {
   // Get file extension
   const fileExtension = item.filename.split('.').pop().toLowerCase();
 
-  // Determine download path based on file type and Subfolders
+  // Determine download path based on file type and subfolders
   for (const folder in fileTypes) {
     if (fileTypes[folder][fileExtension]) {
       // Get the parent folder name
-      console.log("..saving a ." + fileExtension + " file");
+      console.log("download: Saving a ." + fileExtension + " file");
       const parentFolder = Object.keys(fileTypes).find(key => fileTypes[key] === fileTypes[folder]);
 
       // Get the variable name associated with the parent folder
       const variableName = Object.keys(folderVariables).find(key => folderVariables[key] === parentFolder);
 
       if (folderFileTypesInSubfolder[variableName]) {
-        console.log("own folder for", fileExtension, "= true");
+        console.log("download: Own folder for", fileExtension, "= true");
         suggest({ filename: parentFolder + "/" + fileTypes[folder][fileExtension] + "/" + item.filename });
-        console.log("Saving file in /" + parentFolder + "/" + fileExtension);
+        console.log("download: Saving file in /" + parentFolder + "/" + fileExtension);
       } else {
-        console.log("own folder for", fileExtension, "= false");
+        console.log("download: Own folder for", fileExtension, "= false");
         suggest({ filename: parentFolder + "/" + item.filename });
-        console.log("saving file in /" + parentFolder);
+        console.log("download: Saving file in /" + parentFolder);
       }
       return;
     }
