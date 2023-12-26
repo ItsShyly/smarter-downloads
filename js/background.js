@@ -55,11 +55,12 @@ function updateFileTypes() {
 
   // Populate fileTypes object with file extensions
   for (const folder in whichFileTypes) {
-    whichFileTypes[folder].forEach(extension => {
-      fileTypes[folderVariables[folder]][extension] = extension;
-    });
+    if (whichFileTypes.hasOwnProperty(folder)) {  // Check if the property exists
+      whichFileTypes[folder].forEach(extension => {
+        fileTypes[folderVariables[folder]][extension] = extension;
+      });
+    }
   }
-
   console.log("storage update: Updated fileTypes:", fileTypes);
 }
 
