@@ -1,15 +1,29 @@
-// Cursor Glow
-const cursorGlowContainer = document.querySelector(".cg-container");
-const cursorGlowElement = document.querySelectorAll(".cg-element");
+// HTML: settings change visualizer
+function blinkBorder(color, folder) {
+  const folderId = document.getElementById(folder);
+  console.log("blink");
 
-cursorGlowContainer.addEventListener("pointermove", (ev) => {
-  cursorGlowElement.forEach((cgElement) => {
-    const rect = cgElement.getBoundingClientRect();
+  // Remove existing border color classes
+  folderId.classList.remove('blink-green', 'blink-red', 'transition');
 
-    cgElement.style.setProperty("--x", ev.clientX - rect.left);
-    cgElement.style.setProperty("--y", ev.clientY - rect.top);
-  });
-});
+  if (color === "green") {
+    // Add green border
+    folderId.classList.add('blink-green');
+  } else {
+    // Add red border
+    folderId.classList.add('blink-red');
+  }
+
+  // Add transition for back-to-normal border
+  setTimeout(function () {
+    folderId.classList.add('transition');
+  }, 250);
+
+  // remove border color classes
+  setTimeout(function () {
+    folderId.classList.remove('blink-green', 'blink-red');
+  }, 250);
+}
 
 // Folder Variables (folder Names)
 let folderVariables = {
@@ -28,57 +42,85 @@ let customFileTypes = {
   folder4: ["gif"],
 };
 
-// initial: Bool for checkbox if file types should save in subfolders
+// checkbox if file types should save in subfolders
 let folderFileTypesInSubfolder = {
-  folder1: true,
-  folder2: true,
-  folder3: true,
+  folder1: false,
+  folder2: false,
+  folder3: false,
   folder4: false,
-  folderOthers: false
+  folderOthers: false,
 };
 
+// Initial: Load customFileTypes into tag elements on DOM load
+document.addEventListener('DOMContentLoaded', async function () {
+  await getCustomFileTypes();
+});
+// Storage: save data to storage
+function saveToStorage(key, value) {
+  const storageData = {};
+  storageData[key] = value;
+
+  chrome.storage.local.set(storageData, function () {
+    if (chrome.runtime.lastError) {
+      console.error(chrome.runtime.lastError);
+    } else {
+      console.log(`${key} saved`);
+    }
+  });
+}
+
+// Storage: get data from storage
+function getFromStorage(keys) {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get(keys, (result) => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+}
 
 // Event Listener for Click
-document.addEventListener("click", (event) => {
+document.addEventListener("click", async (event) => {
   const clickedElement = event.target;
 
-  //input
+  //Input field
   if (clickedElement.classList.contains("folder-input")) {
     handleFolderInput(clickedElement);
-    saveInputIfEditMode(clickedElement);
+    await saveInputIfEditMode(clickedElement);
   }
 
-  //edit input btn
+  //Edit input btn
   if (clickedElement.classList.contains("edit-label")) {
     handleEditLabel(clickedElement);
   }
 
-  // clicked outside of input field
+  //Clicked outside of input field
   if (!clickedElement.classList.contains("folder-input") && !clickedElement.classList.contains("edit-label")) {
-    saveInputIfEditMode(clickedElement);
+    await saveInputIfEditMode(clickedElement);
   }
 });
 
-document.addEventListener("keydown", (event) => {
-  // Check if the Enter key is pressed
+document.addEventListener("keydown", async (event) => {
+
   if (event.key === "Enter") {
-    // Save the input value when the Enter key is pressed
-    saveInputIfEditMode();
+    // Save the input value
+    await saveInputIfEditMode();
   }
 });
 
 function storeCustomFileTypes() {
-  compareCustomFileTypesContent()
-  chrome.storage.local.set({ "customFileTypes": customFileTypes }, function () {
-    console.log("Storage-set: CustomFileTypes");
-
-  });
+  compareCustomFileTypesContent();
+  saveToStorage("customFileTypes", customFileTypes);
 }
 
 // Function to compare content of customFileTypes and chrome.storage "customFileTypes"
-function compareCustomFileTypesContent() {
+async function compareCustomFileTypesContent() {
   // Retrieve customFileTypes from chrome.storage.local
-  chrome.storage.local.get("customFileTypes", function (result) {
+  try {
+    const result = await getFromStorage("customFileTypes");
     const storedCustomFileTypes = result.customFileTypes;
 
     if (storedCustomFileTypes) {
@@ -99,10 +141,12 @@ function compareCustomFileTypesContent() {
     } else {
       console.log("No customFileTypes found in storage.");
     }
-  });
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-chrome.storage.onChanged.addListener(function(changes, namespace) {
+chrome.storage.onChanged.addListener(function (changes, namespace) {
   if (namespace === "local") {
     for (const folder in changes) {
       if (changes.hasOwnProperty(folder)) {
@@ -117,45 +161,20 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
   }
 });
 
-function blinkBorder(color, folder) {
-  const folderId = document.getElementById(folder);
-  console.log("blink");
-
-  // Remove existing animation classes
-  folderId.classList.remove('blink-green', 'blink-red', 'transition');
-
-  if (color === "green") {
-    // Add green border and circling animation
-    folderId.classList.add('blink-green');
-  } else {
-    // Add red border and circling animation
-    folderId.classList.add('blink-red');
-  }
-
-  // Remove the animation class after the animation duration
-  setTimeout(function () {
-    folderId.classList.add('transition');
-  }, 250);
-
-  setTimeout(function () {
-    folderId.classList.remove('blink-green', 'blink-red');
-  }, 250);
-}
 
 
-// Function to save the input value if in edit mode
-function saveInputIfEditMode(clicked) {
+async function saveInputIfEditMode(clicked) {
   const editInputs = document.querySelectorAll(".folder-input:not([readonly])");
 
-  editInputs.forEach((input) => {
+  for (const input of editInputs) {
     const folderId = input.id.replace("-name", "");
 
     if (clicked && clicked === input && clicked.classList.contains("folder-input")) {
       // Save the input value when clicking the same input field
       folderVariables[folderId] = input.value;
       const newFolderName = input.value.replace(/[^a-zA-Z0-9]/g, '');
-      input.value = "/" + newFolderName ;
-      saveToStorage(folderId, newFolderName);
+      input.value = "/" + newFolderName;
+      await saveToStorage(folderId, newFolderName);
     } else {
       // Save the input value and reset the input field when clicking outside or another input field
       input.readOnly = true;
@@ -163,23 +182,23 @@ function saveInputIfEditMode(clicked) {
       input.nextElementSibling.classList.remove("invisible");
       folderVariables[folderId] = input.value;
       const newFolderName = input.value.replace(/[^a-zA-Z0-9]/g, '');
-      input.value = "/" + newFolderName ;
-      saveToStorage(folderId, newFolderName);
+      input.value = "/" + newFolderName;
+      await saveToStorage(folderId, newFolderName);
     }
-  });
+  }
 }
 
 // Load Input Values on DOM Load
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function () {
   loadInputs();
 });
 
-// Load Inputs from variables
-function loadInputs() {
-  document.querySelectorAll('.folder-input').forEach((input) => {
+async function loadInputs() {
+  const folderInputs = document.querySelectorAll('.folder-input');
+  for (const input of folderInputs) {
     const folderId = input.id.replace("-name", "");
     input.value = "/" + folderVariables[folderId];
-  });
+  }
 }
 
 // Iterate through Folder Variables
@@ -205,43 +224,30 @@ function handleEditLabel(labelButton) {
   }
 }
 
-// Save to Storage
-function saveToStorage(folderId, value) {
-  const storageData = {};
-  storageData[folderId] = value;
-
-  chrome.storage.local.set(storageData, function () {
-    if (chrome.runtime.lastError) {
-      console.error(chrome.runtime.lastError);
-    } else {
-    }
-  });
-}
-
 // Get Folder Names from Storage
-function getFolderNames(folderName) {
-  chrome.storage.local.get([folderName], function(result) {
-    if (chrome.runtime.lastError) {
-      console.error(chrome.runtime.lastError);
+async function getFolderNames(folderName) {
+  try {
+    const result = await getFromStorage([folderName]);
+    if (result[folderName] !== undefined) {
+      console.log("Storage-got: Folder Name");
+      folderVariables[folderName] = result[folderName];
+      loadInputs();
     } else {
-      if (result[folderName] !== undefined) {
-        console.log("Storage-got: Folder Name");
-        folderVariables[folderName] = result[folderName];
-        loadInputs();
-      } else {
-        console.log("No custom name for:", folderName, "- use initial");
-      }
+      console.log("No custom name for:", folderName, "- use initial");
     }
-  });
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+// Dom load html tag creation for each filetype
+document.addEventListener("DOMContentLoaded", async function () {
   const inputElements = document.querySelectorAll('.tags-input');
 
-  inputElements.forEach(function (inputElement) {
+  for (const inputElement of inputElements) {
     const tagsContainer = inputElement.nextElementSibling;
 
-    inputElement.addEventListener("keydown", function (event) {
+    inputElement.addEventListener("keydown", async function (event) {
       if (event.key === "Enter" || event.key === "," || event.key === ";") {
         event.preventDefault();
 
@@ -260,37 +266,34 @@ document.addEventListener("DOMContentLoaded", function () {
           });
 
           tagsContainer.appendChild(tagElement);
-          updateCustomFileTypes(folderName, tagNamePure, true);
+          await updateCustomFileTypes(folderName, tagNamePure, true);
 
           inputElement.value = "";
         }
       }
     });
-  });
+  }
 });
 
-
-
-function getCustomFileTypes() {
-  chrome.storage.local.get(["customFileTypes"], function (result) {
-    if (chrome.runtime.lastError) {
-      console.error(chrome.runtime.lastError);
+// load store filetypes and store them in customFileTypes
+async function getCustomFileTypes() {
+  try {
+    const result = await getFromStorage(["customFileTypes"]);
+    if (result.customFileTypes) {
+      customFileTypes = result.customFileTypes;
+      console.log("Storage-got: Tag Names");
     } else {
-      if (result.customFileTypes) {
-        customFileTypes = result.customFileTypes;
-        console.log("Storage-got: Tag Names");
-      } else {
-        console.log("Using Initial Tags");
-      }
-      console.log("Updating Tags..");
-      loadCustomFileTypes();
+      console.log("Using Initial Tags");
     }
-  });
-
+    console.log("Updating Tags..");
+    await loadCustomFileTypes();
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-function updateCustomFileTypes(folderId, tagName, isAdd) {
-
+// load var filetypes and update them into storage
+async function updateCustomFileTypes(folderId, tagName, isAdd) {
   if (isAdd) {
     if (!customFileTypes[folderId]) {
       customFileTypes[folderId] = [];
@@ -306,8 +309,8 @@ function updateCustomFileTypes(folderId, tagName, isAdd) {
   console.log("File Types update..");
 }
 
-// Function to load customFileTypes into tag elements on DOM load
-function loadCustomFileTypes() {
+// Load customFileTypes into tag elements
+async function loadCustomFileTypes() {
   for (const folderId in customFileTypes) {
     const tagsContainer = document.getElementById(folderId + '-tags');
     if (tagsContainer) {
@@ -326,10 +329,3 @@ function loadCustomFileTypes() {
     }
   }
 }
-
-
-
-// Load customFileTypes into tag elements on DOM load
-document.addEventListener('DOMContentLoaded', function () {
-  getCustomFileTypes ();
-});
