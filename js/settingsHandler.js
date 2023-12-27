@@ -43,7 +43,7 @@ let customFileTypes = {
 };
 
 // checkbox if file types should save in subfolders
-let folderFileTypesInSubfolder = {
+let subfolderCheckbox = {
   folder1: false,
   folder2: false,
   folder3: false,
@@ -51,6 +51,44 @@ let folderFileTypesInSubfolder = {
   folderOthers: false,
 };
 
+// Function to update the subfolderCheckbox Variabnle
+function updateCheckboxVariable(folderId, isChecked) {
+  subfolderCheckbox[folderId] = isChecked;
+  saveToStorage(subfolderCheckbox,subfolderCheckbox)
+}
+
+// Function to update the subfolder Checkbox Status
+function updateCheckboxStatus(folderId, isChecked) {
+  getFromStorage(subfolderCheckbox)
+  for (const folderId in subfolderCheckbox) {
+    const checkbox = document.getElementById(folderId).querySelector(".toggle-input");
+    if (checkbox) {
+      checkbox.checked = subfolderCheckbox[folderId];
+    }
+  }
+}
+
+// Add event listeners to checkboxes
+document.addEventListener("DOMContentLoaded", async function () {
+  const checkboxes = document.querySelectorAll(".toggle-input");
+
+  checkboxes.forEach(function (checkbox) {
+    checkbox.addEventListener("change", async function () {
+      const folderId = checkbox.closest(".cg-element").id;
+      const isChecked = checkbox.checked;
+      updateCheckboxVariable(folderId, isChecked);
+      // Update the checkbox status in storage
+      await saveToStorage("subfolderCheckbox", subfolderCheckbox);
+    });
+  });
+
+  // Load the checkbox status from storage on DOM load
+  const storedCheckboxStatus = await getFromStorage("subfolderCheckbox");
+  if (storedCheckboxStatus) {
+    subfolderCheckbox = storedCheckboxStatus.subfolderCheckbox || subfolderCheckbox;
+    updateCheckboxStatus();
+  }
+});
 // Initial: Load customFileTypes into tag elements on DOM load
 document.addEventListener('DOMContentLoaded', async function () {
   await getCustomFileTypes();
@@ -229,11 +267,11 @@ async function getFolderNames(folderName) {
   try {
     const result = await getFromStorage([folderName]);
     if (result[folderName] !== undefined) {
-      console.log("Storage-got: Folder Name");
+      console.log("storage-get: New Folder Name");
       folderVariables[folderName] = result[folderName];
       loadInputs();
     } else {
-      console.log("No custom name for:", folderName, "- use initial");
+      console.log("storage-get: No custom name for:", folderName, "");
     }
   } catch (error) {
     console.error(error);

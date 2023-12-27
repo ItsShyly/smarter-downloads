@@ -21,7 +21,7 @@ let whichFileTypes = {
 };
 
 // Checkbox data for saving filetypes in subfolders
-let folderFileTypesInSubfolder = {
+let subfolderCheckbox = {
   folder1: false,
   folder2: true,
   folder3: true,
@@ -66,6 +66,7 @@ function getFromStorage(keys) {
   });
 }
 
+
 // Storage: Function to update fileTypes based on folderVariables
 async function updateFileTypes() {
   const data = Object.fromEntries(
@@ -85,9 +86,13 @@ async function getFolderNamesPromise(folderName) {
     const result = await getFromStorage([folderName]);
 
     if (result[folderName] !== undefined) {
-      console.log(`storage-check: new value for ${folderName}: ${result[folderName]}`);
-      folderVariables[folderName] = result[folderName];
-      await updateFileTypes();
+      const action = folderVariables[folderName] !== result[folderName] ? "new value" : "same value";
+      console.log(`storage-check: ${action} for ${folderName}: ${result[folderName]}`);
+
+      if (action === "new value") {
+        folderVariables[folderName] = result[folderName];
+        await updateFileTypes();
+      }
     } else {
       console.log(`storage-check: empty Storage for ${folderName} - use initial`);
     }
@@ -95,6 +100,8 @@ async function getFolderNamesPromise(folderName) {
     console.error(error);
   }
 }
+
+
 
 // Storage: Function to update whichFileTypes based on custom file types
 async function updateWhichFileTypes() {
@@ -104,7 +111,7 @@ async function updateWhichFileTypes() {
     if (result.customFileTypes) {
       whichFileTypes = result.customFileTypes;
       await updateFileTypes();
-      console.log("CFT: Updated whichFileTypes:", whichFileTypes);
+      console.log("CFT: Updated whichFileTypes");
     } else {
       console.log("CFT: No custom file types found in storage");
     }
@@ -116,10 +123,29 @@ async function updateWhichFileTypes() {
 // Storage: Listen for changes in the storage
 chrome.storage.local.onChanged.addListener(async (changes) => {
   for (const key in changes) {
-    key === "customFileTypes" ? await updateWhichFileTypes() : await getFolderNamesPromise(key);
+    if (key === "customFileTypes") {
+      await updateWhichFileTypes();
+    } else if (key in folderVariables) {
+      await getFolderNamesPromise(key);
+    } else if (key === "subfolderCheckbox") {
+      await updateSubfolderCheckbox(changes[key].newValue);
+    }
   }
 });
 
+// Function to update subfolderCheckbox based on storage changes
+async function updateSubfolderCheckbox(newValue) {
+  try {
+    if (newValue) {
+      subfolderCheckbox = newValue;
+      console.log("Subfolder Checkbox Updated");
+    } else {
+      console.log("Subfolder Checkbox: No value found in storage");
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 // Download: Handle download and suggest a filename
 chrome.downloads.onDeterminingFilename.addListener((item, suggest) => {
@@ -130,7 +156,7 @@ chrome.downloads.onDeterminingFilename.addListener((item, suggest) => {
       const parentFolder = Object.keys(fileTypes).find(key => fileTypes[key] === extensions);
       const variableName = Object.keys(folderVariables).find(key => folderVariables[key] === parentFolder);
 
-      const subfolder = folderFileTypesInSubfolder[variableName] ? extensions[fileExtension] : '';
+      const subfolder = subfolderCheckbox[variableName] ? extensions[fileExtension] : '';
       const filePath = `${parentFolder}/${subfolder}/${item.filename}`;
 
       console.log(`download: Saving a .${fileExtension} file`);
@@ -148,13 +174,24 @@ chrome.downloads.onDeterminingFilename.addListener((item, suggest) => {
   suggest({ filename: defaultPath });
 });
 
-// Update file types and fetch folder names
+// Update filetypes, subfolderCheckbox and fetch folder names
 async function initializeOrRefreshData() {
   await updateWhichFileTypes();
 
-  // Call getFolderNames for initial setup
-  for (const folderName in folderVariables) {
-    await getFolderNamesPromise(folderName);
-  }
+
   await updateFileTypes();
+
+  // Fetch and update subfolderCheckbox during initialization
+  try {
+    const result = await getFromStorage(["subfolderCheckbox"]);
+
+    if (result.subfolderCheckbox) {
+      subfolderCheckbox = result.subfolderCheckbox;
+      console.log("Subfolder Checkbox Updated during Initialization:", subfolderCheckbox);
+    } else {
+      console.log("Subfolder Checkbox: No value found in storage during Initialization");
+    }
+  } catch (error) {
+    console.error(error);
+  }
 }
