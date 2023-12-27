@@ -61,7 +61,6 @@ function updateFileTypes() {
       });
     }
   }
-  console.log("storage update: Updated fileTypes:", fileTypes);
 }
 
 // initial: Function to initialize or update folder names and file types
@@ -84,12 +83,11 @@ function getFolderNamesPromise(folderName) {
         reject(chrome.runtime.lastError);
       } else {
         if (result[folderName] !== undefined) {
-          console.log("storage update: Retrieved new value for " + folderName + ": " + result[folderName]);
+          console.log("storage-check: new value for " + folderName + ": " + result[folderName]);
           folderVariables[folderName] = result[folderName]; // Update the variable
-          console.log(folderVariables);
           resolve();
         } else {
-          console.log("storage update: Retrieved empty Storage for", folderName, "- use initial");
+          console.log("storage-check: empty Storage for", folderName, "- use initial");
           resolve();
         }
       }
@@ -104,27 +102,10 @@ function updateWhichFileTypes() {
       console.error(chrome.runtime.lastError);
     } else {
       if (result.customFileTypes) {
-        console.log("storage update: Updating whichFileTypes with custom file types");
         whichFileTypes = result.customFileTypes;
-        console.log("storage update: Updated whichFileTypes:", whichFileTypes);
+        console.log("CFT: Updated whichFileTypes:", whichFileTypes);
       } else {
-        console.log("storage update: No custom file types found in storage");
-      }
-    }
-  });
-}
-
-// storage update: Function to get folder names from storage
-function getFolderNames(folderName) {
-  chrome.storage.local.get([folderName], function (result) {
-    if (chrome.runtime.lastError) {
-      console.error(chrome.runtime.lastError);
-    } else {
-      if (result[folderName] !== undefined) {
-        console.log("storage update: Retrieved new value for " + folderName + ": " + result[folderName]);
-        folderVariables[folderName] = result[folderName]; // Update the variable
-      } else {
-        console.log("storage update: Retrieved empty Storage for", folderName, "- use initial");
+        console.log("CFT: No custom file types found in storage");
       }
     }
   });
@@ -183,5 +164,5 @@ chrome.downloads.onDeterminingFilename.addListener(function (item, suggest) {
   }
 
   // Default path if no match is found
-  suggest({ filename: folderVariables.folderOthers + item.filename });
+  suggest({ filename: folderVariables.folderOthers + "/" + item.filename });
 });
