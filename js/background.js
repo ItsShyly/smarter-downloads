@@ -85,6 +85,7 @@ function getFolderNamesPromise(folderName) {
         if (result[folderName] !== undefined) {
           console.log("storage-check: new value for " + folderName + ": " + result[folderName]);
           folderVariables[folderName] = result[folderName]; // Update the variable
+          updateFileTypes();
           resolve();
         } else {
           console.log("storage-check: empty Storage for", folderName, "- use initial");
@@ -103,6 +104,7 @@ function updateWhichFileTypes() {
     } else {
       if (result.customFileTypes) {
         whichFileTypes = result.customFileTypes;
+        updateFileTypes()
         console.log("CFT: Updated whichFileTypes:", whichFileTypes);
       } else {
         console.log("CFT: No custom file types found in storage");
@@ -116,10 +118,8 @@ chrome.storage.local.onChanged.addListener(async function (changes, namespace) {
   for (const key in changes) {
     if (key === "customFileTypes") {
       await updateWhichFileTypes();
-      await updateFileTypes(); // storage update: Update fileTypes when customFileTypes change
     } else {
       await getFolderNamesPromise(key);
-      await updateFileTypes(); // storage update: Update fileTypes when folder names change
     }
   }
 });
