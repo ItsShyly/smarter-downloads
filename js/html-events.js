@@ -37,6 +37,19 @@ let folderFileTypesInSubfolder = {
   folderOthers: false
 };
 
+// storage: set
+function setStorage(key, value) {
+  const storageData = {};
+  storageData[key] = value;
+
+  chrome.storage.local.set(storageData, function () {
+    if (chrome.runtime.lastError) {
+      console.error(chrome.runtime.lastError);
+    } else {
+      console.log(`${key} saved`);
+    }
+  });
+}
 
 // Event Listener for Click
 document.addEventListener("click", (event) => {
@@ -68,11 +81,8 @@ document.addEventListener("keydown", (event) => {
 });
 
 function storeCustomFileTypes() {
-  compareCustomFileTypesContent()
-  chrome.storage.local.set({ "customFileTypes": customFileTypes }, function () {
-    console.log("Storage-set: CustomFileTypes");
-
-  });
+  compareCustomFileTypesContent();
+  setStorage("customFileTypes", customFileTypes);
 }
 
 // Function to compare content of customFileTypes and chrome.storage "customFileTypes"
@@ -155,7 +165,7 @@ function saveInputIfEditMode(clicked) {
       folderVariables[folderId] = input.value;
       const newFolderName = input.value.replace(/[^a-zA-Z0-9]/g, '');
       input.value = "/" + newFolderName ;
-      saveToStorage(folderId, newFolderName);
+      setStorage(folderId, newFolderName);
     } else {
       // Save the input value and reset the input field when clicking outside or another input field
       input.readOnly = true;
@@ -164,7 +174,7 @@ function saveInputIfEditMode(clicked) {
       folderVariables[folderId] = input.value;
       const newFolderName = input.value.replace(/[^a-zA-Z0-9]/g, '');
       input.value = "/" + newFolderName ;
-      saveToStorage(folderId, newFolderName);
+      setStorage(folderId, newFolderName);
     }
   });
 }
@@ -203,19 +213,6 @@ function handleEditLabel(labelButton) {
     inputField.readOnly = false;
     labelButton.classList.add('invisible')
   }
-}
-
-// Save to Storage
-function saveToStorage(folderId, value) {
-  const storageData = {};
-  storageData[folderId] = value;
-
-  chrome.storage.local.set(storageData, function () {
-    if (chrome.runtime.lastError) {
-      console.error(chrome.runtime.lastError);
-    } else {
-    }
-  });
 }
 
 // Get Folder Names from Storage
