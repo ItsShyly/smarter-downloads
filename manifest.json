@@ -5,11 +5,13 @@
     "description": "Automatic Download Path Switcher",
 
     "icons": {
-        "128": "icons/128.png"
+        "16": "icons/SD16.png",
+        "48": "icons/SD48.png",
+        "128": "icons/SD128.png"
     },
 
     "action": {
-        "default_icon": "icons/128.png"
+        "default_icon": "icons/SD128.png"
     },
 
     "background": {
