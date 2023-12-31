@@ -132,4 +132,41 @@ p {
     font-size: 100px;
 }
 
+#popup {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--secondary);
+    padding: 20px;
+    z-index: 999;
+    border-radius: 10px;
+    visibility: hidden;
+    display: flex;
+    width: 90vw;
+}
+
+
+#popup-close {
+    outline: 0;
+    border: 0;
+    background: 0;
+    cursor: pointer;
+    padding-left: 20px;
+    position: absolute;
+    right: 0;
+    top: 10%;
+    color: var(--text)
+}
+
+
+
+@media screen and  (max-width: 950px) {
+
+    #popup {
+        visibility: visible;
+    }
+}
+
+
 

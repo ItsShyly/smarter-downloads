@@ -102,3 +102,31 @@
 .button:hover {
     box-shadow: var(--primary) 0 0 20px;
 }
+
+@media screen and  (max-width: 950px) {
+    #connect {
+        visibility: hidden;
+    }
+}
+
+@media screen and  (max-width: 1700px) {
+
+    .connect-card {
+        width: 22vw;
+        height: 35vw;
+    }
+
+    .card-info {
+        height: 25vw;
+    }
+
+    .card-name-outer {
+        height: 9vw;
+    }
+
+    .info-text {
+        height: 14vw;
+    }
+
+}
+
