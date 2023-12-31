@@ -1,0 +1,13 @@
+
+.connect-wrapper {
+    width: 90%;
+    height: 70%;
+    display: flex;
+}
+
+.connect-box {
+    width: 400px;
+    height: 600px;
+    background-color: var(--primary)
+}
+
