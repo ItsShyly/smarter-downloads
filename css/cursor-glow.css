@@ -1,15 +1,13 @@
 .cg-container {
     height: 800px;
     width: 800px;
-    background-color: #131313;
+    background-color: var(--boxes);
     border-radius: 20px;
     padding-right: 5px;
-    border: 1px solid #1c1c1c;
+    border: 1px solid var(--border);
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
-    transition: all 0.4s ease-in-out; /* Smooth transition for border color changes */
+    transition: all 0.4s ease-in-out;
 }
-
-
 
 .cg-element:hover {
     border: 1px solid var(--primary);

@@ -1,5 +1,10 @@
-// Start: Open options page
+// Start: Open options page on icon click
 chrome.action.onClicked.addListener(function (tab) {
+  chrome.runtime.openOptionsPage();
+});
+
+// Open options page on install
+chrome.runtime.onInstalled.addListener(function(details) {
   chrome.runtime.openOptionsPage();
 });
 
