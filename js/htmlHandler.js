@@ -1,4 +1,4 @@
-// Cursor Glow
+// - Cursor Glow:
 const cursorGlowContainer = document.querySelector(".cg-container");
 const cursorGlowElement = document.querySelectorAll(".cg-element");
 
@@ -11,9 +11,76 @@ cursorGlowContainer.addEventListener("pointermove", (ev) => {
   });
 });
 
-document.addEventListener("DOMContentLoaded", (event) => {
-  initialActiveCheck()
+// - Scrolling:
+
+// variables
+let isMouseOverContainer = false;
+let isCtrlPressed = false;
+let isScrolling = false;
+let scrollTimeout;
+
+// Array of section switch links
+const links = document.querySelectorAll('a[href^="#"]');
+
+// document event listeners
+document.addEventListener("DOMContentLoaded", initialActiveCheck);
+document.addEventListener("keydown", handleKeyDown);
+document.addEventListener("keyup", handleKeyUp);
+document.addEventListener("wheel", (event) => {
+  if (!isMouseOverContainer) {
+    handleScroll(event.deltaY);
+  }
 });
+
+// window event listeners
+window.addEventListener("focus", handleWindowFocus);
+window.addEventListener("blur", handleWindowBlur);
+window.addEventListener('scroll', function() {
+  isSelected(window.scrollY);
+});
+
+// cursorGlowContainer (settings container) event listeners
+cursorGlowContainer.addEventListener("mouseover", () => {
+  isMouseOverContainer = true;
+});
+
+cursorGlowContainer.addEventListener("mouseout", () => {
+  isMouseOverContainer = false;
+});
+
+// Link click listener
+links.forEach(function(link) {
+  link.addEventListener('click', handleLinkClick);
+});
+
+// Using onmousewheel as a fallback for older browsers
+document.onmousewheel = (event) => {
+  if (!isMouseOverContainer) {
+    handleScroll(event.wheelDelta);
+  }
+};
+
+
+// ctrl press check on keyDown
+function handleKeyDown(event) {
+  if (event.key === "Control") {
+    isCtrlPressed = true;
+  }
+}
+function handleKeyUp(event) {
+  if (event.key === "Control") {
+    isCtrlPressed = false;
+  }
+}
+
+// ctrl press reset in case someone let go ctrl in another tab
+function handleWindowFocus() {
+  isCtrlPressed = false;
+}
+function handleWindowBlur() {
+  isCtrlPressed = false;
+}
+
 
 // give active class based on isInViewport
 function initialActiveCheck() {
@@ -30,7 +97,7 @@ function initialActiveCheck() {
   }
 }
 
-// Function to check if an element is in the viewport
+// check if an element is in the viewport
 function isInViewport(element) {
   const rect = element.getBoundingClientRect();
   return (
@@ -41,62 +108,31 @@ function isInViewport(element) {
   );
 }
 
-// Flag to check if the mouse is over cg-container
-let isMouseOverContainer = false;
-
-// Add mouseover and mouseout events to cg-container
-cursorGlowContainer.addEventListener("mouseover", () => {
-  isMouseOverContainer = true;
-});
-
-cursorGlowContainer.addEventListener("mouseout", () => {
-  isMouseOverContainer = false;
-});
-
-// Using addEventListener with the wheel event
-document.addEventListener("wheel", (event) => {
-  // Modern browsers
-  if (!isMouseOverContainer) {
-    handleScroll(event.deltaY);
-  }
-});
-
-// Using onmousewheel as a fallback for older browsers
-document.onmousewheel = (event) => {
-  // Legacy browsers
-  if (!isMouseOverContainer) {
-    handleScroll(event.wheelDelta);
-  }
-};
-
-let isScrolling = false;
-
 // Function to handle scroll and navigate to #main or #connect
 function handleScroll(delta) {
-  if (delta > 0 && !isScrolling) {
-    isScrolling = true;
-    // Scrolled down
-    scrollToTarget("#connect");
-    //todo: give connect wrapper margin class, for animation when scrolling down
-  } else if (delta < 0 && !isScrolling) {
-    isScrolling = true;
-    // Scrolled up
-    scrollToTarget("#main");
-    //todo: remove connect wrapper margin class, for animation when scrolling up
-  } else {
-    isScrolling = true;
-    // delta is 0, no vertical scroll
-    console.log("No vertical scroll");
+  if (!isCtrlPressed) {
+    if (delta > 0 && !isScrolling) {
+      isScrolling = true;
+      // Scrolled down
+      scrollToTarget("#connect");
+      //todo: give connect wrapper margin class, for animation when scrolling down
+    } else if (delta < 0 && !isScrolling) {
+      isScrolling = true;
+      // Scrolled up
+      scrollToTarget("#main");
+      //todo: remove connect wrapper margin class, for animation when scrolling up
+    } else {
+      isScrolling = true;
+      // delta is 0, no vertical scroll
+      console.log("No vertical scroll");
+    }
+    // Debounce: Reset isScrolling flag
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(function () {
+      isScrolling = false;
+    }, 200);
   }
-  // Debounce: Reset isScrolling flag
-  clearTimeout(scrollTimeout);
-  scrollTimeout = setTimeout(function () {
-    isScrolling = false;
-  }, 200);
 }
-
-// Variable to store the timeout ID
-let scrollTimeout;
 
 // Function to scroll to the target element with smooth behavior
 function scrollToTarget(targetId) {
@@ -107,20 +143,15 @@ function scrollToTarget(targetId) {
   });
 }
 
-// Function to handle click on links
+// handle click on links
 function handleLinkClick(event) {
   const id = event.target.getAttribute("href");
   scrollToTarget(id);
   event.preventDefault();
 }
 
-// Add click event listener to all links with href starting with "#"
-const links = document.querySelectorAll('a[href^="#"]');
-links.forEach(function(link) {
-  link.addEventListener('click', handleLinkClick);
-});
 
-// Function to get the top position of the target element
+// get the top position of the target element
 function getTargetTop(elem) {
   const id = elem.getAttribute("href");
   const offset = 60;
@@ -128,23 +159,15 @@ function getTargetTop(elem) {
   return targetElement.offsetTop - offset;
 }
 
-// Add scroll event listener
-window.addEventListener('scroll', function() {
-  isSelected(window.scrollY);
-});
-
-// Array of section links
-const sections = document.querySelectorAll('a[href^="#"]');
-
-// Function to check if a section is in view
+// check if a section is in view
 function isSelected(scrolledTo) {
   const threshold = 100;
 
-  sections.forEach(function(section) {
+  links.forEach(function(section) {
     const target = getTargetTop(section);
 
     if (scrolledTo > target - threshold && scrolledTo < target + threshold) {
-      sections.forEach(function(link) {
+      links.forEach(function(link) {
         link.classList.remove("active");
       });
       section.classList.add("active");
