@@ -9,6 +9,11 @@
 
 </head>
 <body>
+<div id="popup">
+    <p>The screen width of your device is too small!<br>
+        Some feature may not work right.</p>
+    <button id="popup-close">X</button>
+</div>
 <nav>
     <ul>
         <li><a href="#main"></a></li>
@@ -18,7 +23,7 @@
 <section id="main" class="full-height">
     <div class="split-wrapper">
         <div class="container-left">
-            <h1 class="xl-title"> Welcome! <img src="/icons/SD400.png" width="120"> </h1>
+            <h1 class="xl-title"> Welcome! <img class="main-logo" src="/assets/icons/SD400.png" width="120"> </h1>
             <div class="text-outer">
                 <h2>Downloads are getting saved in <span class="c-gray">$BrowserDownloadPath</span><span class="c-blue">/FolderName</span>.<br>
                     If the folder Name is empty, it stores just in <span class="c-gray">$BrowserDownloadPath</span><span class="c-blue">/</span>
@@ -160,12 +165,12 @@
 
         <div class="connect-card">
             <div class="card-title-outer">
-                <img class="card-icon" src="assets/images/logo-spotify.png">
+                <img class="card-icon" src="assets/logos/logo-spotify.png">
                 <h4 class="card-title">Spotify</h4>
             </div>
             <div class="card-info">
                 <div class="card-name-outer">
-                    <img class="info-image" src="./assets/images/pp-spotify.png"/>
+                    <img class="info-image" src="assets/avatars/pp-spotify.png"/>
                     <h2 class="info-name">SHYLY</h2>
                 </div>
                 <p class="info-text">
@@ -181,12 +186,12 @@
 
         <div class="connect-card">
             <div class="card-title-outer">
-                <img class="card-icon" src="assets/images/logo-instagram.png">
+                <img class="card-icon" src="assets/logos/logo-instagram.png">
                 <h4 class="card-title">Instagram</h4>
             </div>
             <div class="card-info">
                 <div class="card-name-outer">
-                    <img class="info-image" src="./assets/images/pp-instagram.png"/>
+                    <img class="info-image" src="assets/avatars/pp-instagram.png"/>
                     <h2 class="info-name">SmallShyly</h2>
                 </div>
                 <p class="info-text">
@@ -202,12 +207,12 @@
 
         <div class="connect-card">
             <div class="card-title-outer">
-                <img class="card-icon" src="assets/images/logo-discord.png">
+                <img class="card-icon" src="assets/logos/logo-discord.png">
                 <h4 class="card-title">Discord</h4>
             </div>
             <div class="card-info">
                 <div class="card-name-outer">
-                    <img class="info-image" src="./assets/images/pp-discord.jpg"/>
+                    <img class="info-image" src="assets/avatars/pp-discord.jpg"/>
                     <h2 class="info-name">.SHYLY</h2>
                 </div>
                 <p class="info-text">
@@ -223,12 +228,12 @@
 
         <div class="connect-card">
             <div class="card-title-outer">
-                <img class="card-icon" src="assets/images/logo-buymeacoffe.png">
+                <img class="card-icon" src="assets/logos/logo-buymeacoffe.png">
                 <h4 class="card-title">Donate</h4>
             </div>
             <div class="card-info">
                 <div class="card-name-outer">
-                    <img class="info-image" src="./assets/images/pp-spotify.png"/>
+                    <img class="info-image" src="assets/avatars/pp-spotify.png"/>
                     <h2 class="info-name">SHYLY</h2>
                 </div>
                 <p class="info-text">
@@ -246,7 +251,6 @@
         </div>
     </div>
 </section>
-
 <div class="grid-background"></div>
 <script src="js/settingsHandler.js"></script>
 <script src="js/htmlHandler.js"></script>

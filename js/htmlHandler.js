@@ -174,3 +174,14 @@ function isSelected(scrolledTo) {
     }
   });
 }
+
+// Popup Warning:
+
+document.getElementById("popup-close").addEventListener("click", closePopup )
+
+function closePopup () {
+  const popup = document.getElementById("popup")
+  popup.style.visibility = "hidden"
+  console.log("made hidden")
+}
+
