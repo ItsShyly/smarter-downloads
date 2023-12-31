@@ -7,124 +7,161 @@
 
 </head>
 <body>
-<h1> Smarter Downloads </h1>
-<div id="cg" class="cg-container">
-    <div class="scroll-box">
-        <div class="settings-wrapper">
-            <!-- folder 1 -->
-            <div id="folder1" class="cg-element">
-                <div class="folder-name">
-                    <div class="edit-btn">
-                        <input id="folder1-name" type="text" class="folder-input" value="..." placeholder="/" readonly>
-                        <label for="folder1-name" class="edit-label">
-                            <svg viewBox="0 0 100 100" class="edit-icon">
-                                <path class="edit-path" d="M24.56 92.536 0 100l7.453-24.583c6.356-.244 17.322 10.792 17.107 17.119zM96.617 32.082l-.475.471L67.383 3.766l.472-.472c12.927-12.94 42.016 15.517 28.762 28.788zM61.64 9.516l28.758 28.785-46.303 46.345c-1.222 1.221-2.234.884-2.234.884l2.314-15.356-14.454.074.072-14.468-15.342 2.312s-.34-1.011.883-2.234L61.64 9.516z"></path>
-                            </svg>
-                        </label>
-                    </div>
-
-                </div>
-                <div class="filetype-outer">
-                            <input type="text" class="tags-input" placeholder="add filetype...">
-                    <div id="folder1-tags" class="filetype-tags" >
-                    </div>
-                    <div class="checkbox-wrapper">
-                        <input type="checkbox" class="toggle-input"/>
-                        subfolder for each filetype
-                    </div>
-                </div>
+<nav>
+    <ul>
+        <li><a href="#main"></a></li>
+        <li><a href="#connect"></a></li>
+    </ul>
+</nav>
+<section id="main" class="full-height">
+    <div class="split-wrapper">
+        <div class="container-left">
+            <h1 class="xl-title"> Welcome! <img src="/icons/SD400.png" width="120"> </h1>
+            <div class="text-outer">
+                <h2>Downloads are getting saved in <span class="c1">$BrowserDownloadPath</span><span class="c2">/FolderName</span>.<br>
+                    If the folder Name is empty, it stores it just in <span class="c1">$BrowserDownloadPath</span><span class="c2">/</span>
+                    <br>
+                    <br>
+                    Files with a matching file extension, which you specify as filetypes,<br>
+                    are saved in the corresponding folder.
+                    <br>
+                    <br>
+                    You also have the option of creating subfolders for each file type.<br>
+                    If you activate it for a folder with for example<span  class="c3"> .png</span><br>
+                    it would save in <span class="c1">$BrowserDownloadPath</span><span class="c2">/FolderName</span><span class="c3">/png</span></h2>
+                <!-- HTML !-->
             </div>
-            <!-- folder 2 -->
-            <div id="folder2" class="cg-element">
-                <div class="folder-name">
-                    <div class="edit-btn">
-                        <input id="folder2-name" type="text" class="folder-input" value="..." placeholder="/" readonly>
-                        <label for="folder2-name" class="edit-label"> <svg viewBox="0 0 100 100" class="edit-icon">
-                                <path class="edit-path" d="M24.56 92.536 0 100l7.453-24.583c6.356-.244 17.322 10.792 17.107 17.119zM96.617 32.082l-.475.471L67.383 3.766l.472-.472c12.927-12.94 42.016 15.517 28.762 28.788zM61.64 9.516l28.758 28.785-46.303 46.345c-1.222 1.221-2.234.884-2.234.884l2.314-15.356-14.454.074.072-14.468-15.342 2.312s-.34-1.011.883-2.234L61.64 9.516z"></path>
-                            </svg>
-                        </label>
-                    </div>
+        </div>
+        <div  class="container-right">
+            <div id="cg" class="cg-container">
+                <div class="scroll-box">
+                    <div class="settings-wrapper">
+                        <!-- folder 1 -->
+                        <div id="folder1" class="cg-element">
+                            <div class="folder-name">
+                                <div class="edit-btn">
+                                    <input id="folder1-name" type="text" class="folder-input" value="..." placeholder="/" readonly>
+                                    <label for="folder1-name" class="edit-label">
+                                        <svg viewBox="0 0 100 100" class="edit-icon">
+                                            <path class="edit-path" d="M24.56 92.536 0 100l7.453-24.583c6.356-.244 17.322 10.792 17.107 17.119zM96.617 32.082l-.475.471L67.383 3.766l.472-.472c12.927-12.94 42.016 15.517 28.762 28.788zM61.64 9.516l28.758 28.785-46.303 46.345c-1.222 1.221-2.234.884-2.234.884l2.314-15.356-14.454.074.072-14.468-15.342 2.312s-.34-1.011.883-2.234L61.64 9.516z"></path>
+                                        </svg>
+                                    </label>
+                                </div>
 
-                </div>
-                <div class="filetype-outer">
-                    <input type="text" class="tags-input" placeholder="add filetype...">
-                    <div id="folder2-tags" class="filetype-tags" >
-                    </div>
-                    <div class="checkbox-wrapper">
-                        <input type="checkbox" class="toggle-input"/>
-                        subfolder for each filetype
-                    </div>
-                </div>
-            </div>
-            <!-- folder 3 -->
-            <div id="folder3" class="cg-element">
-                <div class="folder-name">
-                    <div class="edit-btn">
-                        <input id="folder3-name" type="text" class="folder-input" value="..." placeholder="/" readonly>
-                        <label for="folder3-name" class="edit-label"> <svg viewBox="0 0 100 100" class="edit-icon">
-                                <path class="edit-path" d="M24.56 92.536 0 100l7.453-24.583c6.356-.244 17.322 10.792 17.107 17.119zM96.617 32.082l-.475.471L67.383 3.766l.472-.472c12.927-12.94 42.016 15.517 28.762 28.788zM61.64 9.516l28.758 28.785-46.303 46.345c-1.222 1.221-2.234.884-2.234.884l2.314-15.356-14.454.074.072-14.468-15.342 2.312s-.34-1.011.883-2.234L61.64 9.516z"></path>
-                            </svg>
-                        </label>
-                    </div>
+                            </div>
+                            <div class="filetype-outer">
+                                <input type="text" class="tags-input" placeholder="add filetype...">
+                                <div id="folder1-tags" class="filetype-tags" >
+                                </div>
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" class="toggle-input"/>
+                                    subfolder for each filetype
+                                </div>
+                            </div>
+                        </div>
+                        <!-- folder 2 -->
+                        <div id="folder2" class="cg-element">
+                            <div class="folder-name">
+                                <div class="edit-btn">
+                                    <input id="folder2-name" type="text" class="folder-input" value="..." placeholder="/" readonly>
+                                    <label for="folder2-name" class="edit-label"> <svg viewBox="0 0 100 100" class="edit-icon">
+                                        <path class="edit-path" d="M24.56 92.536 0 100l7.453-24.583c6.356-.244 17.322 10.792 17.107 17.119zM96.617 32.082l-.475.471L67.383 3.766l.472-.472c12.927-12.94 42.016 15.517 28.762 28.788zM61.64 9.516l28.758 28.785-46.303 46.345c-1.222 1.221-2.234.884-2.234.884l2.314-15.356-14.454.074.072-14.468-15.342 2.312s-.34-1.011.883-2.234L61.64 9.516z"></path>
+                                    </svg>
+                                    </label>
+                                </div>
 
-                </div>
-                <div class="filetype-outer">
-                    <input type="text" class="tags-input" placeholder="add filetype...">
-                    <div id="folder3-tags" class="filetype-tags" >
-                    </div>
-                    <div class="checkbox-wrapper">
-                        <input type="checkbox" class="toggle-input"/>
-                        subfolder for each filetype
-                    </div>
-                </div>
-            </div>
-            <!-- folder 4 -->
-            <div id="folder4" class="cg-element">
-                <div class="folder-name">
-                    <div class="edit-btn">
-                        <input id="folder4-name" type="text" class="folder-input" value="..." placeholder="/" readonly>
-                        <label for="folder4-name" class="edit-label"> <svg viewBox="0 0 100 100" class="edit-icon">
-                                <path class="edit-path" d="M24.56 92.536 0 100l7.453-24.583c6.356-.244 17.322 10.792 17.107 17.119zM96.617 32.082l-.475.471L67.383 3.766l.472-.472c12.927-12.94 42.016 15.517 28.762 28.788zM61.64 9.516l28.758 28.785-46.303 46.345c-1.222 1.221-2.234.884-2.234.884l2.314-15.356-14.454.074.072-14.468-15.342 2.312s-.34-1.011.883-2.234L61.64 9.516z"></path>
-                            </svg>
-                        </label>
-                    </div>
+                            </div>
+                            <div class="filetype-outer">
+                                <input type="text" class="tags-input" placeholder="add filetype...">
+                                <div id="folder2-tags" class="filetype-tags" >
+                                </div>
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" class="toggle-input"/>
+                                    subfolder for each filetype
+                                </div>
+                            </div>
+                        </div>
+                        <!-- folder 3 -->
+                        <div id="folder3" class="cg-element">
+                            <div class="folder-name">
+                                <div class="edit-btn">
+                                    <input id="folder3-name" type="text" class="folder-input" value="..." placeholder="/" readonly>
+                                    <label for="folder3-name" class="edit-label"> <svg viewBox="0 0 100 100" class="edit-icon">
+                                        <path class="edit-path" d="M24.56 92.536 0 100l7.453-24.583c6.356-.244 17.322 10.792 17.107 17.119zM96.617 32.082l-.475.471L67.383 3.766l.472-.472c12.927-12.94 42.016 15.517 28.762 28.788zM61.64 9.516l28.758 28.785-46.303 46.345c-1.222 1.221-2.234.884-2.234.884l2.314-15.356-14.454.074.072-14.468-15.342 2.312s-.34-1.011.883-2.234L61.64 9.516z"></path>
+                                    </svg>
+                                    </label>
+                                </div>
 
-                </div>
-                <div class="filetype-outer">
-                    <input type="text" class="tags-input" placeholder="add filetype...">
-                    <div id="folder4-tags" class="filetype-tags" >
-                    </div>
-                    <div class="checkbox-wrapper">
-                        <input type="checkbox" class="toggle-input"/>
-                        subfolder for each filetype
-                    </div>
-                </div>
-            </div>
-            <!-- folder others -->
-            <div id="folderOthers" class="cg-element">
-                <div class="folder-name">
-                    <div class="edit-btn">
-                        <input id="folderOthers-name" type="text" class="folder-input" value="..." placeholder="/" readonly>
-                        <label for="folderOthers-name" class="edit-label"> <svg viewBox="0 0 100 100" class="edit-icon">
-                                <path class="edit-path" d="M24.56 92.536 0 100l7.453-24.583c6.356-.244 17.322 10.792 17.107 17.119zM96.617 32.082l-.475.471L67.383 3.766l.472-.472c12.927-12.94 42.016 15.517 28.762 28.788zM61.64 9.516l28.758 28.785-46.303 46.345c-1.222 1.221-2.234.884-2.234.884l2.314-15.356-14.454.074.072-14.468-15.342 2.312s-.34-1.011.883-2.234L61.64 9.516z"></path>
-                            </svg>
-                        </label>
-                    </div>
+                            </div>
+                            <div class="filetype-outer">
+                                <input type="text" class="tags-input" placeholder="add filetype...">
+                                <div id="folder3-tags" class="filetype-tags" >
+                                </div>
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" class="toggle-input"/>
+                                    subfolder for each filetype
+                                </div>
+                            </div>
+                        </div>
+                        <!-- folder 4 -->
+                        <div id="folder4" class="cg-element">
+                            <div class="folder-name">
+                                <div class="edit-btn">
+                                    <input id="folder4-name" type="text" class="folder-input" value="..." placeholder="/" readonly>
+                                    <label for="folder4-name" class="edit-label"> <svg viewBox="0 0 100 100" class="edit-icon">
+                                        <path class="edit-path" d="M24.56 92.536 0 100l7.453-24.583c6.356-.244 17.322 10.792 17.107 17.119zM96.617 32.082l-.475.471L67.383 3.766l.472-.472c12.927-12.94 42.016 15.517 28.762 28.788zM61.64 9.516l28.758 28.785-46.303 46.345c-1.222 1.221-2.234.884-2.234.884l2.314-15.356-14.454.074.072-14.468-15.342 2.312s-.34-1.011.883-2.234L61.64 9.516z"></path>
+                                    </svg>
+                                    </label>
+                                </div>
 
-                </div>
-                <div class="filetype-outer">
-                    <input type="text" class="tags-input" placeholder="add filetype...">
-                    <div class="checkbox-wrapper">
-                        <input type="checkbox" class="toggle-input"/>
-                        subfolder for each filetype
+                            </div>
+                            <div class="filetype-outer">
+                                <input type="text" class="tags-input" placeholder="add filetype...">
+                                <div id="folder4-tags" class="filetype-tags" >
+                                </div>
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" class="toggle-input"/>
+                                    subfolder for each filetype
+                                </div>
+                            </div>
+                        </div>
+                        <!-- folder others -->
+                        <div id="folderOthers" class="cg-element">
+                            <div class="folder-name">
+                                <div class="edit-btn">
+                                    <input id="folderOthers-name" type="text" class="folder-input" value="..." placeholder="/" readonly>
+                                    <label for="folderOthers-name" class="edit-label"> <svg viewBox="0 0 100 100" class="edit-icon">
+                                        <path class="edit-path" d="M24.56 92.536 0 100l7.453-24.583c6.356-.244 17.322 10.792 17.107 17.119zM96.617 32.082l-.475.471L67.383 3.766l.472-.472c12.927-12.94 42.016 15.517 28.762 28.788zM61.64 9.516l28.758 28.785-46.303 46.345c-1.222 1.221-2.234.884-2.234.884l2.314-15.356-14.454.074.072-14.468-15.342 2.312s-.34-1.011.883-2.234L61.64 9.516z"></path>
+                                    </svg>
+                                    </label>
+                                </div>
+
+                            </div>
+                            <div class="filetype-outer">
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" class="toggle-input"/>
+                                    subfolder for each filetype
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+</section>
+
+<section id="connect" class="full-height">
+    <div class="connect-wrapper">
+
+    </div>
+    <h1>Connect with me: </h1>
+
+</section>
+
 <div class="dotted-filter"></div>
 <script src="js/settingsHandler.js"></script>
-<script src="js/cursorGlow.js"></script>
+<script src="js/htmlHandler.js"></script>
 </body>
 </html>
