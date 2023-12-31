@@ -185,3 +185,54 @@ function closePopup () {
   console.log("made hidden")
 }
 
+//copy discord name
+document.getElementById("dc-name").addEventListener("click", function () {
+copyTextToClipboard("@.shyly");
+});
+
+document.getElementById("dc-name").addEventListener("mouseover", function () {
+  setTooltipText("Copy to clipboard");
+});
+
+document.getElementById("dc-name").addEventListener("mouseleave", function () {
+  resetTooltip();
+});
+
+function copyTextToClipboard(text) {
+  navigator.clipboard.writeText(text)
+           .then(() => {
+             buttonBlink()
+             setTooltipText("Copied to clipboard");
+           })
+           .catch(err => {
+             console.error('Unable to copy text to clipboard', err);
+           });
+}
+
+function setTooltipText(text) {
+  const tooltip = document.querySelector("#dc-name .tooltiptext");
+  tooltip.innerHTML = text;
+}
+
+function resetTooltip() {
+  setTooltipText("Copy Name to clipboard");
+}
+
+function buttonBlink() {
+  const button = document.getElementById("dc-name");
+  // Remove existing border color classes
+  button.classList.remove('blink-green','transition');
+
+    // Add green border
+    button.classList.add('blink-green');
+
+  // Add transition for back-to-normal border
+  setTimeout(function () {
+    button.classList.add('transition');
+  }, 250);
+
+  // remove border color classes
+  setTimeout(function () {
+    button.classList.remove('blink-green');
+  }, 250)
+}

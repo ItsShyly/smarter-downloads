@@ -103,6 +103,59 @@
     box-shadow: var(--primary) 0 0 20px;
 }
 
+
+#dc-name {
+    border: 1px solid var(--primary);
+    border-radius: 999px;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-family: Inter, Helvetica, "Apple Color Emoji", "Segoe UI Emoji", NotoColorEmoji, "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", EmojiSymbols, -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    opacity: 1;
+    padding: 15px;
+    width: 100px;
+    height: 50px;
+    text-align: center;
+    text-decoration: none;
+    margin-top: -20px;
+    position: relative;
+}
+
+#dc-name .tooltiptext {
+    visibility: hidden;
+    width: 140px;
+    background-color: #3d3d3d;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 120%;
+    left: 50%;
+    margin-left: -70px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+#dc-name:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+#dc-name .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
 @media screen and  (max-width: 950px) {
     #connect {
         visibility: hidden;
@@ -127,6 +180,5 @@
     .info-text {
         height: 14vw;
     }
-
 }
 
