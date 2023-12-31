@@ -18,10 +18,10 @@
         "service_worker": "js/background.js"
     },
 
-    "options_page": "options.html",
+    "options_page": "config.html",
 
     "options_ui": {
-        "page": "options.html",
+        "page": "config.html",
         "open_in_tab": true
     },
 
