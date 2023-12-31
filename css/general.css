@@ -23,12 +23,17 @@
 /* Global Variables and Global Styles */
 * {
     --text: white;
+    --text-info: #d9d9d9;
     --background: #121315;
-    --input: #1c1c1c;
     --primary: #2a84ff;
     --secondary: #fc07a9;
-    --readonly: #a8a8a8;
     --green: #70ff50;
+
+    --boxes: #131313;
+    --cards: #1d1d21;
+    --border: #1c1c1c;
+    --readonly: #a8a8a8;
+    --input: #1c1c1c;
 
     margin: 0 auto;
     box-sizing: border-box;
@@ -101,6 +106,10 @@ h1 {
     text-shadow: 0 0 20px rgba(255, 255, 255, 0.44);
 }
 
+p {
+    font-size: 14px;
+}
+
 .grid-background {
     background: rgba(7, 7, 7, 0);
     background-image: linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
@@ -122,4 +131,5 @@ h1 {
 .xl-title {
     font-size: 100px;
 }
+
 
