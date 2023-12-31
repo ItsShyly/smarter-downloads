@@ -5,13 +5,13 @@
     "description": "Automatic Download Path Switcher",
 
     "icons": {
-        "16": "icons/SD16.png",
-        "48": "icons/SD48.png",
-        "128": "icons/SD128.png"
+        "16": "assets/icons/SD16.png",
+        "48": "assets/icons/SD48.png",
+        "128": "assets/icons/SD128.png"
     },
 
     "action": {
-        "default_icon": "icons/SD128.png"
+        "default_icon": "assets/icons/SD128.png"
     },
 
     "background": {
@@ -22,7 +22,7 @@
 
     "options_ui": {
         "page": "options.html",
-        "open_in_tab": false
+        "open_in_tab": true
     },
 
     "permissions": ["downloads",  "storage"],
