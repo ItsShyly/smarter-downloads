@@ -38,12 +38,63 @@ body {
     background: var(--background);
     font-family: 'Poppins', sans-serif;
     font-weight: 400;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    scroll-behavior: auto;
+}
+
+
+
+section {
     display: flex;
     justify-content: space-evenly;
     flex-direction: column;
     height: 100vh;
     width: 100vw;
 }
+
+nav{
+    -webkit-backface-visibility: hidden;
+    z-index: 5;
+    position: fixed;
+    top: 40%;
+    right: 0;
+    margin: auto;
+    width: 100px;
+}
+
+nav li{
+    height: 20px;
+    margin: 20px 0;
+    list-style: none;
+}
+
+nav a{
+    display: block;
+    width: 25px;
+    height: 25px;
+    text-indent: -9999px;
+    border-radius: 25px;
+    -moz-border-radius:25px;
+    -webkit-border-radius:25px;
+    background-color: transparent;
+    border: 3px solid #a9a9a9;
+    transition: all 0.3s ease;
+    position: relative;
+    left: 0;
+    top: 0;
+}
+nav a:hover,
+nav a.active{
+    background-color: #fff;
+    width: 30px;
+    height: 30px;
+    left: -3px;
+    top: -2px;
+    border: 3px solid #ffffff;
+}
+
 
 /* Heading Styles */
 h1 {
@@ -226,7 +277,7 @@ input:focus {
     linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
     background-size: 30px 30px;
     width: 100vw;
-    height: 100vh;
+    height: 200vh;
     position: absolute;
     left: 0;
     top: 0;
@@ -314,3 +365,72 @@ input:focus {
 .checkbox-wrapper :focus:not(.focus-visible) {
     outline: 0;
 }
+
+.split-wrapper {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+.container-left,
+.container-right {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+.container-right {
+
+}
+
+.c1 {
+    color: var(--readonly);
+}
+.c2 {
+    color: var(--primary);;
+}
+.c3 {
+    color: #70ff50;
+}
+
+.text-outer {
+    padding-top: 50px;
+    padding-bottom: 100px;
+}
+
+
+/* CSS */
+.button {
+    background: var(--primary);
+    border-radius: 999px;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-family: Inter,Helvetica,"Apple Color Emoji","Segoe UI Emoji",NotoColorEmoji,"Noto Color Emoji","Segoe UI Symbol","Android Emoji",EmojiSymbols,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans",sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    opacity: 1;
+    outline: 0 solid transparent;
+    padding: 15px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    word-break: break-word;
+    border: 0;
+    width: 100px;
+    height: 50px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.button:hover {
+    box-shadow: var(--primary) 0 0 20px;
+}
+
+.xl-title {
+    font-size: 100px;
+}
+
+
