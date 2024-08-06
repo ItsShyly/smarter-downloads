@@ -1,28 +1,28 @@
 {
     "manifest_version": 3,
-    "name": "Automatic Download Path",
+    "name": "Smarter Downloads",
     "version": "1.0",
-    "description": "Automatic Download Path Switcher",
+    "description": "Smarter Downloads is a configurable automatic download path switcher for customized file types and folders",
 
     "icons": {
-        "16": "icon/icon16.png",
-        "48": "icon/icon48.png",
-        "128": "icon/icon128.png"
+        "16": "assets/icons/SD16.png",
+        "48": "assets/icons/SD48.png",
+        "128": "assets/icons/SD128.png"
     },
 
     "action": {
-        "default_icon": "icon/icon128.png"
+        "default_icon": "assets/icons/SD128.png"
     },
 
     "background": {
         "service_worker": "js/background.js"
     },
 
-    "options_page": "options.html",
+    "options_page": "config.html",
 
     "options_ui": {
-        "page": "options.html",
-        "open_in_tab": false
+        "page": "config.html",
+        "open_in_tab": true
     },
 
     "permissions": ["downloads",  "storage"],

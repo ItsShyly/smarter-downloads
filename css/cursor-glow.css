@@ -1,16 +1,12 @@
 .cg-container {
-    width: 60vw;
-    height: 80vh;
-    display: grid;
-    grid-column-gap: 1rem;
-    grid-row-gap: 5rem;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-}
-
-.cg-container .cg-others {
-    grid-column: span 2;
-    grid-row: 3 / 3;
+    height: 800px;
+    width: 800px;
+    background-color: var(--boxes);
+    border-radius: 20px;
+    padding-right: 5px;
+    border: 1px solid var(--border);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+    transition: all 0.4s ease-in-out;
 }
 
 .cg-element:hover {
@@ -21,15 +17,16 @@
 .cg-element {
     --x-px: calc(var(--x) * 1px);
     --y-px: calc(var(--y) * 1px);
-    background-color: rgba(0, 0, 0, 0.2);
-    width: 500px;
-    height: 200px;
+    background-color: rgb(37, 37, 37);
+    width: 90%;
+    height: 250px;
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     border: 1px solid rgba(0, 0, 0, 0);
-    overflow: hidden;
+    border-radius: 10px;
+
 }
 
 .cg-element:before,
@@ -61,3 +58,4 @@
 .cg-element:hover:after {
     opacity: 1;
 }
+
