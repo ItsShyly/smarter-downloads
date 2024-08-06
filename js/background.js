@@ -162,8 +162,14 @@ chrome.downloads.onDeterminingFilename.addListener((item, suggest) => {
       const variableName = Object.keys(folderVariables).find(key => folderVariables[key] === parentFolder);
 
       const subfolder = subfolderCheckbox[variableName] ? extensions[fileExtension] : '';
-      const filePath = `${parentFolder}/${subfolder}/${item.filename}`;
-
+      
+      let filePath;
+      if (subfolder) {
+        filePath = `${parentFolder}/${subfolder}/${item.filename}`;
+      } else {
+        filePath = `${parentFolder}/${item.filename}`;
+      }
+      
       console.log(`download: Saving a .${fileExtension} file`);
       console.log(`download: Own folder for ${fileExtension} = ${subfolder !== ''}`);
       console.log(`download: Saving file in /${filePath}`);
