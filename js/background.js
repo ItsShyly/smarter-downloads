@@ -28,8 +28,8 @@ let whichFileTypes = {
 // Checkbox data for saving filetypes in subfolders
 let subfolderCheckbox = {
   folder1: false,
-  folder2: true,
-  folder3: true,
+  folder2: false,
+  folder3: false,
   folder4: false,
   folderOthers: false
 };
