@@ -4,13 +4,14 @@
 > [!NOTE]
 > This extension allows you to customize the download path for files based on file types and folder names. You can specify every file type in the settings and let it automatically download to the specified folder.
 
-![banner](./docs/SmartDownloads.png)
+![banner](./assets/readme/banner.png)
 
 ## Usage
 
-![tutorial](./docs/Tutorial1.png)
+![tutorial](./assets/readme/tutorial.png)
 
-**How D o i Start?:**
+**How Do i Start?:**
+
 - *Click on the extension icon (the location may vary depending on your browser).*
 - *The Settings Page should open.*
 

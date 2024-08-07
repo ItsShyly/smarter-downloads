@@ -1,8 +1,9 @@
 {
     "manifest_version": 3,
     "name": "Smarter Downloads",
-    "version": "1.0.2",
-    "description": "Smarter Downloads is a configurable automatic download path switcher for customized file types and folders",
+
+    "version": "1.0.3",
+    "description": "Configurable automatic download path switcher for customizable file types and folders",
 
     "icons": {
         "16": "assets/icons/SD16.png",
