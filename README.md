@@ -11,6 +11,7 @@
 ![tutorial](./assets/readme/tutorial.png)
 
 **How Do i Start?:**
+
 - *Click on the extension icon (the location may vary depending on your browser).*
 - *The Settings Page should open.*
 
