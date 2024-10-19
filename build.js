@@ -121,7 +121,7 @@ const copyFiles = () => {
 };
 
 // Minify JavaScript, CSS, images, and copy necessary files
-const minifyAll = async () => {
+const build = async () => {
     try {
         await minifyFiles('', '.html', htmlMinify);
         await minifyFiles('./js', '.js', null); // No minifier, handled by Terser directly
@@ -134,4 +134,4 @@ const minifyAll = async () => {
     }
 };
 
-minifyAll();
+build();

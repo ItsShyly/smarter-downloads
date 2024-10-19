@@ -36,4 +36,5 @@
 >- `background.js`: Mainly manages the download paths based on the stored settings.
 >- `settingsHandler.js`: Handles UI events and updates frontend storage on setting changes.
 >- `htmlHandler.js`: Handles HTML event such as animations, cursor glow, smooth scroll..
->- `minify.js`: Minify files and images with 'npm run minify', use npm install beforehand.
+>- `build.js`: Builds the project by minifying files and images. Use 'npm run build' after installing dependencies with 'npm install'.
+
