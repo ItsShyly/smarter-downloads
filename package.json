@@ -4,8 +4,7 @@
   "main": "background.js",
   "type": "module",
   "scripts": {
-    "minify": "node minify.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "node build.js"
   },
   "keywords": [],
   "author": "",
