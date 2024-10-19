@@ -1,6 +1,6 @@
-import {
-    minify
-} from 'minify';
+import { minify as htmlMinify } from 'minify';
+import { minify as cssMinify } from 'minify';
+import { minify as terserMinify } from 'terser';
 import imagemin from 'imagemin';
 import imageminPngquant from 'imagemin-pngquant';
 import fs from 'fs';
@@ -20,7 +20,7 @@ console.error(`Creating ${folderName} folder -> ${outputDir}`);
 fs.mkdirSync(outputDir);
 
 // Minify files in specified directory
-const minifyFiles = async(dir, extension) => {
+const minifyFiles = async (dir, extension, minifier) => {
     const files = fs.readdirSync(dir && dir !== "" ? dir : "./"); //check  for root
 
     for (const file of files) {
@@ -45,21 +45,28 @@ const minifyFiles = async(dir, extension) => {
             }
 
             try {
-                const minified = await minify(filePath);
-                fs.writeFileSync(outputFilePath, minified);
+                let minified;
+                if (extension === '.js') {
+                    const code = fs.readFileSync(filePath, 'utf8');
+                    minified = await terserMinify(code);
+                    fs.writeFileSync(outputFilePath, minified.code);
+                } else {
+                    minified = await minifier(filePath);
+                    fs.writeFileSync(outputFilePath, minified);
+                }
                 console.log(`Minified File: ${file}`);
             } catch (error) {
                 console.error(`Error minifying ${file}:`, error);
             }
         } else if (stats.isDirectory()) {
             // Recursively minify files in the subdirectory
-            await minifyFiles(filePath, extension);
+            await minifyFiles(filePath, extension, minifier);
         }
     }
 };
 
 // Minify images in specified directory
-const minifyImages = async(dir) => {
+const minifyImages = async (dir) => {
     const files = fs.readdirSync(dir);
 
     for (const file of files) {
@@ -114,11 +121,11 @@ const copyFiles = () => {
 };
 
 // Minify JavaScript, CSS, images, and copy necessary files
-const minifyAll = async() => {
+const minifyAll = async () => {
     try {
-        await minifyFiles('', '.html');
-        await minifyFiles('./js', '.js');
-        await minifyFiles('./css', '.css');
+        await minifyFiles('', '.html', htmlMinify);
+        await minifyFiles('./js', '.js', null); // No minifier, handled by Terser directly
+        await minifyFiles('./css', '.css', cssMinify);
         await minifyImages('./assets');
         copyFiles();
         console.log(`Done -> ${outputDir}`);
@@ -126,6 +133,5 @@ const minifyAll = async() => {
         console.error('Error during minification process:', error);
     }
 };
-
 
 minifyAll();

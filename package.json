@@ -16,6 +16,7 @@
     "imagemin-mozjpeg": "^10.0.0",
     "imagemin-pngquant": "^10.0.0",
     "imagemin-webp": "^8.0.0",
-    "minify": "^11.4.1"
+    "minify": "^11.4.1",
+    "terser": "^5.36.0"
   }
 }
