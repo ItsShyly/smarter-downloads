@@ -1,11 +1,13 @@
-// Start: Open options page on icon click
+// Open options page on icon click
 chrome.action.onClicked.addListener(function (tab) {
   chrome.runtime.openOptionsPage();
 });
 
 // Open options page on install
 chrome.runtime.onInstalled.addListener(function(details) {
-  chrome.runtime.openOptionsPage();
+  if (details.reason === "install") {
+    chrome.runtime.openOptionsPage();
+  }
 });
 
 // Folder name-variables
