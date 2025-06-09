@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="script-src 'self' 'wasm-unsafe-eval';"
+    />
+    <title>Smarter Downloads</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="frontend.js" type="module"></script>
+  </head>
+  <body>
+    <img src="/assets/icons/SD400.png " class="background-overlay" alt="Background Icon" draggable="false"/>
+    <div class="explorer-window">
+      <!-- Title Bar -->
+      <div class="title-bar">
+        <div>Download Path Manager</div>
+        <div class="window-controls">
+          <div class="window-btn minimize"></div>
+          <div class="window-btn maximize"></div>
+          <div class="window-btn close"></div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+
+        <div class="tool-btn" id="back-button">
+          <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="tool-btn" id="forward-button">
+          <i class="fas fa-arrow-right"></i>
+        </div>
+            <div class="tool-btn" id="new-folder-btn">
+            <i class="fas fa-folder-plus"></i>
+        </div>
+
+        <div class="address-bar">
+          <input
+            type="text"
+            class="path-input"
+            value="Downloads"
+            id="path-input"
+          />
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="content-area">
+        <!-- Sidebar -->
+        <div class="sidebar">
+          <div id ="sidebar-item" class="sidebar-item active">
+            <i class="fas fa-folder accent-light"></i>
+            <span>Downloads</span>
+          </div>
+        </div>
+
+        <!-- Main View -->
+        <div class="main-view" id="content-area">
+          <div id="folder-grid-container">
+            <div class="folder-grid" id="folder-grid">
+              <!-- Folders will be generated here -->
+            </div>
+          </div>
+
+          <!-- File Types Section -->
+          <div
+            class="file-types-section"
+            id="file-types-section"
+            style="display: none">
+            <div class="subfolder-option">
+              <label class="toggle-switch">
+                <input type="checkbox" class="toggle-input" />
+                <span class="slider"></span>
+              </label>
+              <span>Save each filetype in own subfolders</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <div id="status-info">5 folders</div>
+        <div>Ready</div>
+      </div>
+    </div>
+  </body>
+</html>
