@@ -7,7 +7,7 @@
       http-equiv="Content-Security-Policy"
       content="script-src 'self' 'wasm-unsafe-eval';"
     />
-    <title>Download Path Manager</title>
+    <title>Smarter Downloads</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -16,6 +16,7 @@
     <script src="frontend.js" type="module"></script>
   </head>
   <body>
+    <img src="/assets/icons/SD400.png" class="background-overlay" alt="Background Icon" />
     <div class="explorer-window">
       <!-- Title Bar -->
       <div class="title-bar">
@@ -54,8 +55,8 @@
       <div class="content-area">
         <!-- Sidebar -->
         <div class="sidebar">
-          <div class="sidebar-item active">
-            <i class="fas fa-folder"></i>
+          <div id ="sidebar-item" class="sidebar-item active">
+            <i class="fas fa-folder accent-light"></i>
             <span>Downloads</span>
           </div>
         </div>
