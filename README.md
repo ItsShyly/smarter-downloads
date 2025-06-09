@@ -1,4 +1,4 @@
-# Smarter Downloads ![plot](./dist/assets/icons/SD48.png)
+# Smarter Downloads ![plot](./src/assets/icons/SD48.png)
 
 ## Overview
 
@@ -11,7 +11,7 @@
 
 
 
-![banner](./dist/assets/readme/banner.png)
+![banner](./src/assets/readme/banner.png)
 
 ## What's New in v2.0
 **Complete Windows Explorer UI redesign** 
@@ -31,8 +31,8 @@
 
 ## Usage
 
-<img src="./dist/assets/readme/tutorial1.png" width="400" height="auto">
-<img src="./dist/assets/readme/tutorial2.png" width="400" height="auto">
+<img src="./src/assets/readme/tutorial1.png" width="400" height="auto">
+<img src="./src/assets/readme/tutorial2.png" width="400" height="auto">
 
 
 **Getting Started:**
