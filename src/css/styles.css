@@ -253,6 +253,7 @@ body {
 .folder-rename-input {
     height: 1.5em;
     margin: 0 5px;
+    color: var(--text-light);
 }
 
 .folder-rename-input {
