@@ -1,40 +1,66 @@
-# Smarter Downloads ![plot](./assets/icons/SD48.png)
+# Smarter Downloads ![plot](./dist/assets/icons/SD48.png)
 
 ## Overview
-> [!NOTE]
-> This extension allows you to customize the download path for files based on file types and folder names. You can specify every file type in the settings and let it automatically download to the specified folder.
 
-![banner](./assets/readme/banner.png)
+ *Customize download paths based on file types with an easy to understand Windows Explorer interface.*
+
+>[!IMPORTANT]  
+> This extension cannot create folders outside your browser's configured default download directory 
+> e.g., C:\Users\[You]\Downloads
+> All organizational folders must be subdirectories within this location
+
+
+
+![banner](./dist/assets/readme/banner.png)
+
+## What's New in v2.0
+**Complete Windows Explorer UI redesign** 
+- Looks and works like real Windows 11 File Explorer
+
+**Visual folder navigation** 
+- Browse folders like in Windows Explorer
+
+**Improved path switching** 
+- Faster and more reliable file sorting
+
+**Simplified setup** 
+- Right-click context menus and intuitive controls
+
+**New code structure** 
+- Easier maintenance and future updates
 
 ## Usage
 
-![tutorial](./assets/readme/tutorial.png)
+<img src="./dist/assets/readme/tutorial1.png" width="400" height="auto">
+<img src="./dist/assets/readme/tutorial2.png" width="400" height="auto">
 
-**How Do i Start?:**
 
-- *Click on the extension icon (the location may vary depending on your browser).*
-- *The Settings Page should open.*
+**Getting Started:**
+1. Click the extension icon in your browser toolbar
+2. The Windows File Explorer-style interface will open
 
-**Changing Folder Names:**
-- *Click on the pencil icon next to the folder name to edit it.*
-- *Press Enter or click somewhere else to save changes.*
+**Managing Download Paths:**
+- **Right-click on folders** to rename, edit,or delete the
+- **Double-click folders** to open and view their file types
+- **Right-click in empty space** to add new file type if in a folder
+- **Right-click in empty space** to add new folder if outside of a folder
+- **Toggle subfolders** using the switch in folder views
 
-**Filter Filetypes:**
-- *Click on the **add filetype..** input and type your filetypes.*
-- *Press Enter or use commas to seperat multiple filetypes.*
-- *Click on the **X** of the filetype to remove a filetype.*
+**Key Features:**
+- Address bar shows and edits current download path
+- Visual feedback when paths change
+- Context menus matching Windows Explorer
+- Automatic saving on every change
 
-**Subfolder Option:**
-- *Toggle the checkbox to create your own subfolders for each file type.*
-- *The names of the subfolders will correspond to the file type names (e.g., Music/MP4).*
+**Saving & Data:**
+- All settings auto-save locally after each change
+- Persists across browser sessions
+- Cleared when you uninstall the extension
 
-**Saving:**
-- *Settings are saved locally and will persist across browser sessions.*
-- *Settings will be cleared when you remove the extension.*
+## Development
 
->## File Descriptions:
->- `background.js`: Mainly manages the download paths based on the stored settings.
->- `settingsHandler.js`: Handles UI events and updates frontend storage on setting changes.
->- `htmlHandler.js`: Handles HTML event such as animations, cursor glow, smooth scroll..
->- `build.js`: Builds the project by minifying files and images. Use 'npm run build' after installing dependencies with 'npm install'.
-
+### Building
+```bash
+npm install
+npm run build
+npm run dev
