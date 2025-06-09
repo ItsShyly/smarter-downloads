@@ -1,42 +1,77 @@
+/* ===== RESET & BASE STYLES ===== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: white;
+}
 
+:root {
+    --bg-dark: #191919;
+    --bg-darker: #0a203a;
+    --border-dark: #252525;
+    --accent-light: #ffda70;
+    --text-light: #ffffff;
+    --text-gray: #555;
+    --hover-bg: #383838;
+    --active-blue: #2196F3;
+    --success-green: #28a745;
 }
 
 body {
-    background: linear-gradient(135deg, #161216, #181818);
     min-height: 100vh;
+    background: linear-gradient(135deg, var(--bg-darker), #181818);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-light);
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
+    overflow: hidden;
+
 }
 
+.accent-light {
+    color: var(--accent-light);
+}
+
+.background-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 400px;
+    height: auto;
+    opacity: 0.05;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ===== WINDOW CONTAINER ===== */
 .explorer-window {
-    width: 100vh;
+    width: min(100vh, 90vw);
+    height: 85vh;
     background: transparent;
     border-radius: 8px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: 85vh;
+    position: absolute;
 }
 
-/* Title Bar */
+/* ===== TITLE BAR ===== */
 .title-bar {
-    background: linear-gradient(to right, #282424, #2722229a);
-    color: white;
     padding: 8px 12px;
+    background: #00000041;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 14px;
+    font-size: 0.875rem;
     user-select: none;
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: #1919193b;
+
 }
 
 .window-controls {
@@ -51,127 +86,130 @@ body {
     cursor: pointer;
 }
 
-/* Menu Bar */
+/* ===== MENU BAR ===== */
 .menu-bar {
-    background: #191919;
     padding: 4px 8px;
+    background: var(--bg-dark);
     display: flex;
 }
 
 .menu-item {
     padding: 4px 8px;
-    font-size: 13px;
+    font-size: 0.8125rem;
     cursor: pointer;
     border-radius: 3px;
+    transition: background 0.2s;
 }
 
 .menu-item:hover {
     background: #504c4c;
 }
 
-/* Toolbar */
+/* ===== TOOLBAR ===== */
 .toolbar {
-    background: #1919190e;
     padding: 6px 12px;
+    background: #00000041;
+    border-left: 1px solid var(--border-dark);
+    border-bottom: 1px solid var(--border-dark);
+    border-right: 1px solid var(--border-dark);
     display: flex;
     align-items: center;
     gap: 15px;
-    border: 1px solid #252525;
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+
 }
 
 .tool-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
     padding: 4px 8px;
+    font-size: 0.8125rem;
     background: #1919190e;
     border-radius: 3px;
     cursor: pointer;
-    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
 }
 
 .tool-btn:hover {
-    background: #504c4c;
+    background: #85858531;
 }
 
-/* Address Bar */
+/* ===== ADDRESS BAR ===== */
 .address-bar {
-    background: transparent;
     padding: 8px 12px;
     display: flex;
     align-items: center;
     gap: 8px;
-    width: 100%
+    width: 100%;
 }
 
 .address-label {
-    font-size: 13px;
-    color: #555;
+    font-size: 0.8125rem;
+    color: var(--text-gray);
 }
 
 .path-input {
     flex: 1;
     padding: 6px 10px;
-    border-radius: 5px;
-    font-size: 13px;
-    background: #3f3f3f;
+    font-size: 0.8125rem;
+    background: #3f3f3f48;
     border: 1px solid transparent;
+    border-radius: 5px;
+    transition: all 0.3s;
+    color: var(--text-light);
+
 }
 
 .path-input:focus {
-  background-color: #222222;;
-  border: 1px solid #3f3f3f;
+    background-color: #2222226b;
+    border-color: #3f3f3f;
 }
 
-/* Main Content */
+/* ===== MAIN CONTENT AREA ===== */
 .content-area {
     flex: 1;
     display: flex;
-    background: #191919;
+    background: var(--bg-dark);
     overflow: hidden;
 }
 
 .sidebar {
     width: 200px;
-    background: #191919;
-    border-left: 1px solid #252525;
     padding: 10px 0;
+    background: var(--bg-dark);
+    border-left: 1px solid var(--border-dark);
 }
 
 .sidebar-item {
     padding: 8px 15px;
+    font-size: 0.8125rem;
+    cursor: pointer;
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 13px;
-    cursor: pointer;
+    transition: border 0.2s;
 }
 
 .sidebar-item.active {
-    background:#383838;
-    border: 1px solid transparent;
+    background: var(--hover-bg);
 }
 
 .sidebar-item:hover {
-    border: 1px solid white;
-
+    border: 1px solid var(--text-light);
 }
 
 .main-view {
     flex: 1;
     padding: 15px;
     overflow-y: auto;
-    background: #191919;
-    border-left: 1px solid #252525;
-    border-right: 1px solid #252525;
-
+    background: var(--bg-dark);
+    border-left: 1px solid var(--border-dark);
+    border-right: 1px solid var(--border-dark);
 }
 
-#folder-grid-container {
-    position: relative;
-    min-height: 500px;
-}
-
+/* ===== FOLDER GRID ===== */
 .folder-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -179,42 +217,40 @@ body {
 }
 
 .folder-item {
-    height: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 5px;
-    transition: all 0.2s;
     position: relative;
     border: 1px solid transparent;
+    transition: all 0.2s;
 }
 
-.folder-item:hover {
-    background: #383838
-}
-
-.selected {
-    background: #383838;
-    border: 1px solid #252525;
+.folder-item:hover,
+.folder-item.selected,
+.file-type-item:hover,
+.file-type-item.selected {
+    background: var(--hover-bg);
+    border-color: var(--border-dark);
 }
 
 .folder-icon {
-    font-size: 40px;
-    color: #ffda70;
+    font-size: 2.5rem;
+    color: var(--accent-light);
     margin-bottom: 8px;
 }
 
 .folder-name {
+    font-size: 0.8125rem;
     text-align: center;
-    font-size: 13px;
-    color: #ffffff;
     word-break: break-word;
     width: 100%;
 }
 
-.folder-name, .folder-rename-input {
+.folder-name,
+.folder-rename-input {
     height: 1.5em;
     margin: 0 5px;
 }
@@ -222,6 +258,14 @@ body {
 .folder-rename-input {
     width: 100px;
     padding: 2px;
+    font-size: 0.875rem;
+    background-color: var(--bg-dark);
+    border: 1px solid transparent;
+    border-radius: 3px;
+}
+
+.folder-rename-input:focus {
+    border-color: var(--text-light);
 }
 
 .rename-btn {
@@ -231,26 +275,23 @@ body {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 0.875rem;
     opacity: 0.7;
+    transition: opacity 0.2s;
 }
 
 .rename-btn:hover {
     opacity: 1;
 }
 
-.filetype-icon {
-    font-size: 20px;
-    color: #888;
-}
-
-/* File Types Section */
+/* ===== FILE TYPES SECTION ===== */
 .file-types-section {
-    border-top: 1px solid #252525;
+    border-top: 1px solid var(--border-dark);
+    margin-top: 1.5rem;
 }
 
 .section-title {
-    font-size: 16px;
+    font-size: 1rem;
     margin-bottom: 15px;
     color: #333;
     display: flex;
@@ -265,57 +306,28 @@ body {
 }
 
 .file-type-item {
-    height: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 5px;
-    transition: all 0.2s;
     position: relative;
+    border: 1px solid transparent;
+    transition: all 0.2s;
 }
 
 .file-type-item:hover {
-    background: #383838
+    background: var(--hover-bg);
 }
 
-
-.add-filetype {
-    display: flex;
-    gap: 8px;
-    margin-top: 15px;
+.filetype-icon {
+    font-size: 2.5rem;
+    color: var(--text-gray);
+    margin-bottom: 8px;
 }
 
-.filetype-input {
-    flex: 1;
-    padding: 8px 12px;
-    background-color: #191919;
-    border: 1px solid #3f3f3f;
-    border-radius: 3px;
-    font-size: 13px;
-}
-
-.filetype-input:focus {
-  background-color: #222222;;
-  border: 1px solid #3f3f3f;
-}
-
-.add-btn {
-    padding: 8px 15px;
-    background: #28a745;
-    color: white;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 13px;
-}
-
-.add-btn:hover {
-    background: #218838;
-}
-
-/* Subfolder Option */
+/* ===== TOGGLE SWITCH ===== */
 .subfolder-option {
     margin-top: 20px;
     display: flex;
@@ -344,8 +356,8 @@ body {
     right: 0;
     bottom: 0;
     background-color: #222222;
-    transition: .4s;
     border-radius: 24px;
+    transition: .4s;
 }
 
 .slider:before {
@@ -356,69 +368,48 @@ body {
     left: 4px;
     bottom: 4px;
     background-color: #2e2e2e;
-    transition: .4s;
     border-radius: 50%;
+    transition: .4s;
 }
 
-input:checked + .slider {
-    background-color: #2196F3;
+input:checked+.slider {
+    background-color: var(--active-blue);
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
     transform: translateX(26px);
 }
 
-/* Status Bar */
+/* ===== STATUS BAR ===== */
 .status-bar {
-    background: #252525;
     padding: 4px 12px;
+    background: var(--border-dark);
     display: flex;
     justify-content: space-between;
-    font-size: 12px;
-    color: #555;
+    font-size: 0.75rem;
+    color: var(--text-light);
 }
 
-
-
-.folder-name, .folder-rename-input {
-    vertical-align: middle;
-}
-
-.folder-rename-input {
-    width: 100px;
-    border: 1px solid transparent;
-    border-radius: 3px;
-    font-size: 14px;
-    background-color: #191919;
-}
-
-.folder-rename-input:focus {
-    border: 1px solid white;
-}
-
+/* ===== CONTEXT MENU ===== */
 #context-menu {
     display: none;
     position: absolute;
-    background-color: rgba(25, 25, 25, 0.2);
-    border: 1px solid #252525;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    z-index: 1000;
     min-width: 150px;
-    min-height: 100px;
-    display: flex;
-
+    background-color: rgba(25, 25, 25, 0.2);
+    border: 1px solid var(--border-dark);
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
+    z-index: 1000;
 }
 
 .context-menu-item {
     padding: 8px 12px;
     cursor: pointer;
-    align-self: center;
+    transition: background 0.2s;
 }
 
 .context-menu-item:hover {
-    background-color:  #504c4c5d;
+    background-color: #504c4c5d;
 }
-

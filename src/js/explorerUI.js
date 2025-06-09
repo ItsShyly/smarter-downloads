@@ -24,20 +24,29 @@ document.addEventListener("DOMContentLoaded", async function () {
   document
     .getElementById("new-folder-btn")
     .addEventListener("click", createNewFolder);
+    document
+    .getElementById("sidebar-item")
+    .addEventListener("click", navigateBack);
 
   createContextMenu();
   hideContextMenu();
 
-  // Add global click listener to hide context menu
+  // Add global click listener to hide context menu and select items
   document.addEventListener("click", (e) => {
+    const isFolderOrFile = e.target.closest(".folder-item, .file-type-item");
+
     removeSelectedClass();
+    if (isFolderOrFile) {
+      isFolderOrFile.classList.add("selected");
+    }
+
     if (contextMenu && !contextMenu.contains(e.target)) {
       hideContextMenu();
     }
   });
 
   // Add contextmenu listener to the main content area
-  const contentArea = document.getElementById("folder-grid-container");
+  const contentArea = document.getElementById("content-area");
   contentArea.addEventListener("contextmenu", (e) => {
     e.preventDefault();
 
@@ -268,17 +277,55 @@ async function renderExplorer() {
     // Show file types section
     fileTypesSection.style.display = "block";
 
-    // Setup subfolder toggle
     const checkbox = fileTypesSection.querySelector(".toggle-input");
-    checkbox.checked =
-      StorageManager.subfolderCheckbox[currentFolderKey] || false;
+    const isChecked = StorageManager.subfolderCheckbox[currentFolderKey] || false;
+    checkbox.checked = isChecked;
+
+    // Apply icon classes immediately on load
+    updateIconsBasedOnCheckboxState(isChecked);
+
     checkbox.onchange = () => {
-      StorageManager.setSubfolderOption(currentFolderKey, checkbox.checked);
+    const isNowChecked = checkbox.checked;
+    StorageManager.setSubfolderOption(currentFolderKey, isNowChecked);
+    updateIconsBasedOnCheckboxState(isNowChecked);
     };
+
 
     statusInfo.textContent = `${fileTypes.length} file types`;
   }
 }
+
+function updateIconsBasedOnCheckboxState(isChecked) {
+  const icons = document.querySelectorAll(".filetype-icon, .folder-icon");
+  const names = document.querySelectorAll(".filetype-name, .folder-name");
+
+  icons.forEach(icon => {
+    if (isChecked) {
+      if (icon.classList.contains("filetype-icon")) {
+        icon.classList.remove("fas", "fa-file", "filetype-icon");
+        icon.classList.add("fas", "fa-folder", "folder-icon");
+      }
+    } else {
+      if (icon.classList.contains("folder-icon")) {
+        icon.classList.remove("fas", "fa-folder", "folder-icon");
+        icon.classList.add("fas", "fa-file", "filetype-icon");
+      }
+    }
+  });
+
+  names.forEach(nameEl => {
+    const originalText = nameEl.textContent;
+    if (isChecked) {
+      nameEl.textContent = originalText.replace(/^\*\./, "");
+    } else {
+      if (!originalText.startsWith("*.")) {
+        nameEl.textContent = `*.${originalText}`;
+      }
+    }
+  });
+}
+
+
 
 function createFolderElement(folderName, folderKey) {
   const folderEl = document.createElement("div");
@@ -290,6 +337,7 @@ function createFolderElement(folderName, folderKey) {
         <span class="folder-name">${folderName}</span>
     `;
 
+  // Double click navigates
   folderEl.addEventListener("dblclick", () => {
     navigateTo([folderKey]);
   });
