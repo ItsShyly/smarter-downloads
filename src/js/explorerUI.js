@@ -394,12 +394,16 @@ function renameFolder(folderKey) {
 
   // Save handler
   const saveRename = () => {
-    if (completed) return;
-    completed = true;
-    const newName = input.value.trim();
+
+    const rawName = input.value.trim();
+    const newName = rawName.replace(/[^a-zA-Z0-9 ]/g, '');
+
     if (newName) {
       StorageManager.renameFolder(folderKey, newName);
       nameSpan.textContent = newName;
+    } else {
+      alert("Invalid folder name. Please use only letters and numbers.");
+      nameSpan.textContent = currentName;
     }
     input.replaceWith(nameSpan);
   };
@@ -474,12 +478,12 @@ function navigateToPath(path) {
 function createNewFolder() {
   const folderName = prompt("Enter folder name:", "New Folder");
   if (folderName && folderName.trim() !== "") {
-    
+
     // Remove invalid characters
-    const cleanName = folderName.trim().replace(/[\\/:*?"<>|]/g, '');
+    const cleanName = folderName.trim().replace(/[^a-zA-Z0-9 ]/g, '');
     if (cleanName) {
       StorageManager.createNewFolder(cleanName).then(() => {
-        renderExplorer();
+      renderExplorer();
       });
     } else {
       alert("Invalid folder name. Please use only valid characters.");
