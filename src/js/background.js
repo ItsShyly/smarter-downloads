@@ -6,6 +6,7 @@ class StorageManager {
     "folder4",
     "folderOthers",
   ];
+  
   static folderVariables = {
     folder1: "Audios",
     folder2: "Videos",
@@ -29,42 +30,56 @@ class StorageManager {
     folderOthers: false,
   };
 
+  static customFolders = {}; // Stores nested folder structure
+
   static async initialize() {
     await this.loadFromStorage();
-    chrome.storage.local.onChanged.addListener(
-      this.handleStorageChange.bind(this)
-    );
+    chrome.storage.local.onChanged.addListener(this.handleStorageChange.bind(this));
   }
 
+    // Load all storage data
   static async loadFromStorage() {
-    // Load all storage data at once
     const storageData = await this.getFromStorage([
       "rootFolders",
       "folderVariables",
       "customFileTypes",
       "subfolderCheckbox",
+      "customFolders"
     ]);
 
-    // Update properties from storage
     if (storageData.rootFolders) this.rootFolders = storageData.rootFolders;
-    if (storageData.folderVariables)
+    if (storageData.folderVariables) {
       Object.assign(this.folderVariables, storageData.folderVariables);
-    if (storageData.customFileTypes)
+    }
+    if (storageData.customFileTypes) {
       Object.assign(this.customFileTypes, storageData.customFileTypes);
-    if (storageData.subfolderCheckbox)
+    }
+    if (storageData.subfolderCheckbox) {
       Object.assign(this.subfolderCheckbox, storageData.subfolderCheckbox);
+    }
+    if (storageData.customFolders) {
+      this.customFolders = storageData.customFolders;
+    }
   }
 
   static handleStorageChange(changes) {
     for (const [key, change] of Object.entries(changes)) {
-      if (key === "rootFolders") {
-        this.rootFolders = change.newValue;
-      } else if (key === "folderVariables") {
-        Object.assign(this.folderVariables, change.newValue);
-      } else if (key === "customFileTypes") {
-        Object.assign(this.customFileTypes, change.newValue);
-      } else if (key === "subfolderCheckbox") {
-        Object.assign(this.subfolderCheckbox, change.newValue);
+      switch (key) {
+        case "rootFolders":
+          this.rootFolders = change.newValue;
+          break;
+        case "folderVariables":
+          Object.assign(this.folderVariables, change.newValue);
+          break;
+        case "customFileTypes":
+          Object.assign(this.customFileTypes, change.newValue);
+          break;
+        case "subfolderCheckbox":
+          Object.assign(this.subfolderCheckbox, change.newValue);
+          break;
+        case "customFolders":
+          this.customFolders = change.newValue;
+          break;
       }
     }
   }
@@ -84,15 +99,12 @@ class StorageManager {
   static async renameFolder(folderKey, newName) {
     this.folderVariables[folderKey] = newName;
     await this.saveToStorage("folderVariables", this.folderVariables);
-
-    // Update UI without full re-render
-    document
-      .querySelectorAll(`[data-folder-key="${folderKey}"] .folder-name`)
-      .forEach((el) => (el.textContent = newName));
   }
 
   static async addFileType(folderKey, fileType) {
-    if (!this.customFileTypes[folderKey]) this.customFileTypes[folderKey] = [];
+    if (!this.customFileTypes[folderKey]) {
+      this.customFileTypes[folderKey] = [];
+    }
     if (!this.customFileTypes[folderKey].includes(fileType)) {
       this.customFileTypes[folderKey].push(fileType);
       await this.saveToStorage("customFileTypes", this.customFileTypes);
@@ -114,23 +126,28 @@ class StorageManager {
     await this.saveToStorage("subfolderCheckbox", this.subfolderCheckbox);
   }
 
-  static async createNewFolder(folderName) {
-    // Generate unique folder key
-    let newKey;
-    let counter = 1;
-    do {
-      newKey = `folder${counter}`;
-      counter++;
-    } while (this.rootFolders.includes(newKey));
-
-    // Add to root folders
-    this.rootFolders.push(newKey);
-    await this.saveToStorage("rootFolders", this.rootFolders);
-
+  static async createNewFolder(folderName, parentPath = []) {
+    const newKey = `folder_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+    
     // Initialize folder properties
     this.folderVariables[newKey] = folderName;
     await this.saveToStorage("folderVariables", this.folderVariables);
 
+    // Add to parent folder or root
+    const parentKey = parentPath.length > 0 ? parentPath[parentPath.length - 1] : null;
+    
+    if (parentKey) {
+      if (!this.customFolders[parentKey]) {
+        this.customFolders[parentKey] = [];
+      }
+      this.customFolders[parentKey].push(newKey);
+      await this.saveToStorage("customFolders", this.customFolders);
+    } else {
+      this.rootFolders.push(newKey);
+      await this.saveToStorage("rootFolders", this.rootFolders);
+    }
+
+    // Initialize empty file types and subfolder option
     this.customFileTypes[newKey] = [];
     await this.saveToStorage("customFileTypes", this.customFileTypes);
 
@@ -141,72 +158,152 @@ class StorageManager {
   }
 
   static async removeFolder(folderKey) {
-    // Remove from root folders
-    const index = this.rootFolders.indexOf(folderKey);
-    if (index !== -1) {
-      this.rootFolders.splice(index, 1);
-      await this.saveToStorage("rootFolders", this.rootFolders);
+    // Remove from parent folder or root
+    let removedFromParent = false;
+    
+    // Check if it's in any custom folder
+    for (const [parentKey, children] of Object.entries(this.customFolders)) {
+      const index = children.indexOf(folderKey);
+      if (index !== -1) {
+        children.splice(index, 1);
+        removedFromParent = true;
+        await this.saveToStorage("customFolders", this.customFolders);
+        break;
+      }
+    }
+    
+    // If not found in custom folders, check root
+    if (!removedFromParent) {
+      const rootIndex = this.rootFolders.indexOf(folderKey);
+      if (rootIndex !== -1) {
+        this.rootFolders.splice(rootIndex, 1);
+        await this.saveToStorage("rootFolders", this.rootFolders);
+      }
     }
 
     // Clean up properties
+    const cleanupPromises = [];
+    
     if (this.folderVariables[folderKey]) {
       delete this.folderVariables[folderKey];
-      await this.saveToStorage("folderVariables", this.folderVariables);
+      cleanupPromises.push(this.saveToStorage("folderVariables", this.folderVariables));
     }
 
     if (this.customFileTypes[folderKey]) {
       delete this.customFileTypes[folderKey];
-      await this.saveToStorage("customFileTypes", this.customFileTypes);
+      cleanupPromises.push(this.saveToStorage("customFileTypes", this.customFileTypes));
     }
 
     if (this.subfolderCheckbox[folderKey] !== undefined) {
       delete this.subfolderCheckbox[folderKey];
-      await this.saveToStorage("subfolderCheckbox", this.subfolderCheckbox);
+      cleanupPromises.push(this.saveToStorage("subfolderCheckbox", this.subfolderCheckbox));
     }
+
+    // Remove any child folders (recursive)
+    if (this.customFolders[folderKey]) {
+      const childFolders = [...this.customFolders[folderKey]];
+      delete this.customFolders[folderKey];
+      cleanupPromises.push(this.saveToStorage("customFolders", this.customFolders));
+      
+      // Recursively remove children
+      for (const childKey of childFolders) {
+        cleanupPromises.push(this.removeFolder(childKey));
+      }
+    }
+
+    await Promise.all(cleanupPromises);
+  }
+
+  static getFolderContent(path) {
+    if (path.length === 0) {
+      return {
+        folders: this.rootFolders,
+        fileTypes: []
+      };
+    }
+    
+    const currentFolderKey = path[path.length - 1];
+    return {
+      folders: this.customFolders[currentFolderKey] || [],
+      fileTypes: this.customFileTypes[currentFolderKey] || []
+    };
+  }
+
+  static getFolderPath(folderKey) {
+    // Find the path to a folder by searching through the hierarchy
+    for (const [parentKey, children] of Object.entries(this.customFolders)) {
+      if (children.includes(folderKey)) {
+        const parentPath = this.getFolderPath(parentKey);
+        return [...parentPath, folderKey];
+      }
+    }
+    
+    // Check if it's a root folder
+    if (this.rootFolders.includes(folderKey)) {
+      return [folderKey];
+    }
+    
+    return []; // Not found
   }
 }
 
-// Initialize asynchronously without top-level await
+// Initialize the extension
 function initBackground() {
   chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage());
 
   chrome.runtime.onInstalled.addListener(({ reason }) => {
-    if (reason === "install") chrome.runtime.openOptionsPage();
+    if (reason === "install") {
+      chrome.runtime.openOptionsPage();
+    }
   });
 
-  // Update download listener
+  // Update download listener to handle nested folders
   StorageManager.initialize().then(() => {
     chrome.downloads.onDeterminingFilename.addListener((item, suggest) => {
       const fileExtension = item.filename.split(".").pop().toLowerCase();
-      let folderKeyToUse = null;
+      let folderPath = [];
 
-      // First check custom folders
-      for (const folderKey of StorageManager.rootFolders) {
-        if (folderKey === "folderOthers") continue;
-
-        const extensions = StorageManager.customFileTypes[folderKey] || [];
-        if (extensions.includes(fileExtension)) {
-          folderKeyToUse = folderKey;
-          break;
+      // Search through all folders to find matching file type
+      const searchFolders = (currentPath) => {
+        const content = StorageManager.getFolderContent(currentPath);
+        
+        // Check file types in current folder
+        if (content.fileTypes.includes(fileExtension)) {
+          folderPath = currentPath;
+          return true;
         }
-      }
+        
+        // Recursively search subfolders
+        for (const folderKey of content.folders) {
+          if (searchFolders([...currentPath, folderKey])) {
+            return true;
+          }
+        }
+        
+        return false;
+      };
 
-      // Then check Others folder
-      if (
-        !folderKeyToUse &&
-        StorageManager.rootFolders.includes("folderOthers")
-      ) {
-        folderKeyToUse = "folderOthers";
-      }
+      // Start search from root
+      searchFolders([]);
 
-      if (folderKeyToUse) {
-        const folderName = StorageManager.folderVariables[folderKeyToUse];
-        const useSubfolder = StorageManager.subfolderCheckbox[folderKeyToUse];
-
+      // If found in a folder
+      if (folderPath.length > 0) {
+        const folderNames = folderPath.map(
+          key => StorageManager.folderVariables[key] || key
+        );
+        
+        const useSubfolder = StorageManager.subfolderCheckbox[folderPath[folderPath.length - 1]];
+        const basePath = folderNames.join("/");
+        
         suggest({
           filename: useSubfolder
-            ? `${folderName}/${fileExtension}/${item.filename}`
-            : `${folderName}/${item.filename}`,
+            ? `${basePath}/${fileExtension}/${item.filename}`
+            : `${basePath}/${item.filename}`,
+        });
+      } else if (StorageManager.rootFolders.includes("folderOthers")) {
+        // Fallback to Others folder
+        suggest({
+          filename: `${StorageManager.folderVariables.folderOthers}/${item.filename}`
         });
       } else {
         suggest({ filename: item.filename });
