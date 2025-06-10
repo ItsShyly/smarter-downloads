@@ -222,7 +222,6 @@ function navigateTo(newPath) {
 
 async function renderExplorer() {
   const folderGrid = document.getElementById("folder-grid");
-  const fileTypesSection = document.getElementById("file-types-section");
   const pathInput = document.getElementById("path-input");
   const statusInfo = document.getElementById("status-info");
   const activeRenameInputs = document.querySelectorAll(".folder-rename-input");
@@ -256,7 +255,6 @@ async function renderExplorer() {
 
   // Clear existing content
   folderGrid.innerHTML = "";
-  fileTypesSection.style.display = "none";
 
   // Render folders
   folders.forEach(folderKey => {
@@ -273,53 +271,7 @@ async function renderExplorer() {
     folderGrid.appendChild(fileTypeEl);
   });
 
-  // Show file types section only in folders (not root)
-  if (currentPath.length > 0) {
-    fileTypesSection.style.display = "block";
-    
-    const checkbox = fileTypesSection.querySelector(".toggle-input");
-    const currentFolderKey = currentPath[currentPath.length-1];
-    const isChecked = StorageManager.subfolderCheckbox[currentFolderKey] || false;
-    checkbox.checked = isChecked;
-    
-    checkbox.onchange = () => {
-      const isNowChecked = checkbox.checked;
-      StorageManager.setSubfolderOption(currentFolderKey, isNowChecked);
-      updateIconsBasedOnCheckboxState(isNowChecked);
-    };
-  }
-
   statusInfo.textContent = `${folders.length} folders, ${fileTypes.length} file types`;
-}
-
-function updateIconsBasedOnCheckboxState(isChecked) {
-  const icons = document.querySelectorAll(".filetype-icon, .folder-icon");
-  const names = document.querySelectorAll(".filetype-name, .folder-name");
-
-  icons.forEach(icon => {
-    if (isChecked) {
-      if (icon.classList.contains("filetype-icon")) {
-        icon.classList.remove("fas", "fa-file", "filetype-icon");
-        icon.classList.add("fas", "fa-folder", "folder-icon");
-      }
-    } else {
-      if (icon.classList.contains("folder-icon")) {
-        icon.classList.remove("fas", "fa-folder", "folder-icon");
-        icon.classList.add("fas", "fa-file", "filetype-icon");
-      }
-    }
-  });
-
-  names.forEach(nameEl => {
-    const originalText = nameEl.textContent;
-    if (isChecked) {
-      nameEl.textContent = originalText.replace(/^\*\./, "");
-    } else {
-      if (!originalText.startsWith("*.")) {
-        nameEl.textContent = `*.${originalText}`;
-      }
-    }
-  });
 }
 
 function createFolderElement(folderName, folderKey) {

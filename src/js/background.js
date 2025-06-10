@@ -22,13 +22,6 @@ class StorageManager {
     folder4: ["gif"],
   };
 
-  static subfolderCheckbox = {
-    folder1: false,
-    folder2: false,
-    folder3: false,
-    folder4: false,
-    folderOthers: false,
-  };
 
   static customFolders = {}; // Stores nested folder structure
 
@@ -43,7 +36,6 @@ class StorageManager {
       "rootFolders",
       "folderVariables",
       "customFileTypes",
-      "subfolderCheckbox",
       "customFolders"
     ]);
 
@@ -53,9 +45,6 @@ class StorageManager {
     }
     if (storageData.customFileTypes) {
       Object.assign(this.customFileTypes, storageData.customFileTypes);
-    }
-    if (storageData.subfolderCheckbox) {
-      Object.assign(this.subfolderCheckbox, storageData.subfolderCheckbox);
     }
     if (storageData.customFolders) {
       this.customFolders = storageData.customFolders;
@@ -73,9 +62,6 @@ class StorageManager {
           break;
         case "customFileTypes":
           Object.assign(this.customFileTypes, change.newValue);
-          break;
-        case "subfolderCheckbox":
-          Object.assign(this.subfolderCheckbox, change.newValue);
           break;
         case "customFolders":
           this.customFolders = change.newValue;
@@ -121,11 +107,6 @@ class StorageManager {
     }
   }
 
-  static async setSubfolderOption(folderKey, enabled) {
-    this.subfolderCheckbox[folderKey] = enabled;
-    await this.saveToStorage("subfolderCheckbox", this.subfolderCheckbox);
-  }
-
   static async createNewFolder(folderName, parentPath = []) {
     const newKey = `folder_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
     
@@ -150,10 +131,6 @@ class StorageManager {
     // Initialize empty file types and subfolder option
     this.customFileTypes[newKey] = [];
     await this.saveToStorage("customFileTypes", this.customFileTypes);
-
-    this.subfolderCheckbox[newKey] = false;
-    await this.saveToStorage("subfolderCheckbox", this.subfolderCheckbox);
-
     return newKey;
   }
 
@@ -192,11 +169,6 @@ class StorageManager {
     if (this.customFileTypes[folderKey]) {
       delete this.customFileTypes[folderKey];
       cleanupPromises.push(this.saveToStorage("customFileTypes", this.customFileTypes));
-    }
-
-    if (this.subfolderCheckbox[folderKey] !== undefined) {
-      delete this.subfolderCheckbox[folderKey];
-      cleanupPromises.push(this.saveToStorage("subfolderCheckbox", this.subfolderCheckbox));
     }
 
     // Remove any child folders (recursive)
@@ -292,13 +264,10 @@ function initBackground() {
           key => StorageManager.folderVariables[key] || key
         );
         
-        const useSubfolder = StorageManager.subfolderCheckbox[folderPath[folderPath.length - 1]];
         const basePath = folderNames.join("/");
         
         suggest({
-          filename: useSubfolder
-            ? `${basePath}/${fileExtension}/${item.filename}`
-            : `${basePath}/${item.filename}`,
+          filename:`${basePath}/${item.filename}`,
         });
       } else if (StorageManager.rootFolders.includes("folderOthers")) {
         // Fallback to Others folder
