@@ -15,7 +15,7 @@
 
 ## What's New in v2.0
 **Complete Windows Explorer UI redesign** 
-- Looks and works like real Windows 11 File Explorer
+- Kinda looks and works like the Windows File Explorer
 
 **Visual folder navigation** 
 - Browse folders like in Windows Explorer
