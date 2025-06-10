@@ -189,10 +189,17 @@ function showContextMenu(x, y, targetType) {
 function addNewFileType() {
   if (currentPath.length === 0) return;
 
-  const fileType = prompt("Enter file type (e.g., jpg):", "");
+  const fileType = prompt("Enter file type:", "png");
   if (fileType && fileType.trim() !== "") {
-    StorageManager.addFileType(currentPath[0], fileType.trim().toLowerCase());
-    renderExplorer();
+
+    // Remove invalid characters and existing dots
+    const cleanFileType = fileType.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (cleanFileType) {
+      StorageManager.addFileType(currentPath[0], cleanFileType);
+      renderExplorer();
+    } else {
+      alert("Please enter a valid file type (letters and numbers only)");
+    }
   }
 }
 
@@ -467,8 +474,15 @@ function navigateToPath(path) {
 function createNewFolder() {
   const folderName = prompt("Enter folder name:", "New Folder");
   if (folderName && folderName.trim() !== "") {
-    StorageManager.createNewFolder(folderName.trim()).then(() => {
-      renderExplorer();
-    });
+    
+    // Remove invalid characters
+    const cleanName = folderName.trim().replace(/[\\/:*?"<>|]/g, '');
+    if (cleanName) {
+      StorageManager.createNewFolder(cleanName).then(() => {
+        renderExplorer();
+      });
+    } else {
+      alert("Invalid folder name. Please use only valid characters.");
+    }
   }
 }
