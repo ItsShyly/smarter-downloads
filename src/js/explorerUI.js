@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   document
     .getElementById("new-folder-btn")
     .addEventListener("click", createNewFolder);
-    document
+  document
     .getElementById("sidebar-item")
     .addEventListener("click", navigateBack);
 
@@ -109,7 +109,7 @@ function showContextMenu(x, y, targetType) {
     editOption.textContent = "Edit";
     editOption.addEventListener("click", () => {
       if (currentContextFolderKey) {
-        navigateTo([currentContextFolderKey]);
+        navigateTo([...currentPath, currentContextFolderKey]);
         hideContextMenu();
       }
     });
@@ -121,11 +121,11 @@ function showContextMenu(x, y, targetType) {
       if (
         currentContextFolderKey &&
         confirm(
-          `Delete folder "${StorageManager.folderVariables[currentContextFolderKey]}" and all its file types?`
+          `Delete folder "${StorageManager.folderVariables[currentContextFolderKey]}" and all its contents?`
         )
       ) {
         StorageManager.removeFolder(currentContextFolderKey).then(() => {
-          if (currentPath[0] === currentContextFolderKey) {
+          if (currentPath.includes(currentContextFolderKey)) {
             navigateTo([]);
           } else {
             renderExplorer();
@@ -155,28 +155,24 @@ function showContextMenu(x, y, targetType) {
     });
     contextMenu.appendChild(deleteOption);
   } else {
-    // Main view context menu - depends on current location
-    if (currentPath.length === 0) {
-      // At root: show Add Folder
-      const addFolderOption = document.createElement("div");
-      addFolderOption.className = "context-menu-item";
-      addFolderOption.textContent = "Add Folder";
-      addFolderOption.addEventListener("click", () => {
-        createNewFolder();
-        hideContextMenu();
-      });
-      contextMenu.appendChild(addFolderOption);
-    } else {
-      // Inside folder: show Add File Type
-      const addFileTypeOption = document.createElement("div");
-      addFileTypeOption.className = "context-menu-item";
-      addFileTypeOption.textContent = "Add File Type";
-      addFileTypeOption.addEventListener("click", () => {
-        addNewFileType();
-        hideContextMenu();
-      });
-      contextMenu.appendChild(addFileTypeOption);
-    }
+    // Main view context menu
+    const addFolderOption = document.createElement("div");
+    addFolderOption.className = "context-menu-item";
+    addFolderOption.textContent = "Add Folder";
+    addFolderOption.addEventListener("click", () => {
+      createNewFolder();
+      hideContextMenu();
+    });
+    contextMenu.appendChild(addFolderOption);
+
+    const addFileTypeOption = document.createElement("div");
+    addFileTypeOption.className = "context-menu-item";
+    addFileTypeOption.textContent = "Add File Type";
+    addFileTypeOption.addEventListener("click", () => {
+      addNewFileType();
+      hideContextMenu();
+    });
+    contextMenu.appendChild(addFileTypeOption);
   }
 
   // Position and show the menu
@@ -185,18 +181,21 @@ function showContextMenu(x, y, targetType) {
   contextMenu.style.top = `${y}px`;
 }
 
-// Handle adding file types via context menu
 function addNewFileType() {
-  if (currentPath.length === 0) return;
-
   const fileType = prompt("Enter file type:", "png");
   if (fileType && fileType.trim() !== "") {
-
     // Remove invalid characters and existing dots
-    const cleanFileType = fileType.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+    const cleanFileType = fileType
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "");
     if (cleanFileType) {
-      StorageManager.addFileType(currentPath[0], cleanFileType);
-      renderExplorer();
+      // For root, use null as folderKey
+      const folderKey =
+        currentPath.length > 0 ? currentPath[currentPath.length - 1] : null;
+      StorageManager.addFileType(folderKey, cleanFileType).then(() => {
+        renderExplorer();
+      });
     } else {
       alert("Please enter a valid file type (letters and numbers only)");
     }
@@ -211,7 +210,6 @@ function hideContextMenu() {
   }
 }
 
-// Unified navigation function
 function navigateTo(newPath) {
   // Add new path to history
   if (currentIndex < history.length - 1) {
@@ -227,7 +225,6 @@ function navigateTo(newPath) {
 
 async function renderExplorer() {
   const folderGrid = document.getElementById("folder-grid");
-  const fileTypesSection = document.getElementById("file-types-section");
   const pathInput = document.getElementById("path-input");
   const statusInfo = document.getElementById("status-info");
   const activeRenameInputs = document.querySelectorAll(".folder-rename-input");
@@ -236,6 +233,11 @@ async function renderExplorer() {
   const forwardButton = document.getElementById("forward-button");
 
   if (activeRenameInputs.length > 0) return;
+
+  // Get content for current path
+  const content = StorageManager.getFolderContent(currentPath);
+  const folders = content.folders || [];
+  const fileTypes = content.fileTypes || [];
 
   // Update path display to show names
   let displayPath = "Downloads";
@@ -248,7 +250,7 @@ async function renderExplorer() {
   pathInput.value = displayPath;
 
   // Toggle new folder button visibility
-  newFolderBtn.style.display = currentPath.length === 0 ? "block" : "none";
+  newFolderBtn.style.display = "block";
 
   // Update navigation button states
   backButton.disabled = currentIndex === 0;
@@ -256,83 +258,27 @@ async function renderExplorer() {
 
   // Clear existing content
   folderGrid.innerHTML = "";
-  fileTypesSection.style.display = "none";
 
-  if (currentPath.length === 0) {
-    // Render root folders
-    let folderCount = 0;
-    StorageManager.rootFolders.forEach((folderKey) => {
-      const folderName = StorageManager.folderVariables[folderKey];
-      if (folderName) {
-        const folderEl = createFolderElement(folderName, folderKey);
-        folderGrid.appendChild(folderEl);
-        folderCount++;
-      }
-    });
-    statusInfo.textContent = `${folderCount} folders`;
-  } else {
-    // Render current folder contents
-    const currentFolderKey = currentPath[0];
-    const fileTypes = StorageManager.customFileTypes[currentFolderKey] || [];
-
-    // Render file types as subfolders
-    fileTypes.forEach((fileType) => {
-      const folderEl = createFileTypeElement(fileType, currentFolderKey);
+  // Render folders
+  folders.forEach((folderKey) => {
+    const folderName = StorageManager.folderVariables[folderKey];
+    if (folderName) {
+      const folderEl = createFolderElement(folderName, folderKey);
       folderGrid.appendChild(folderEl);
-    });
-
-    // Show file types section
-    fileTypesSection.style.display = "block";
-
-    const checkbox = fileTypesSection.querySelector(".toggle-input");
-    const isChecked = StorageManager.subfolderCheckbox[currentFolderKey] || false;
-    checkbox.checked = isChecked;
-
-    // Apply icon classes immediately on load
-    updateIconsBasedOnCheckboxState(isChecked);
-
-    checkbox.onchange = () => {
-    const isNowChecked = checkbox.checked;
-    StorageManager.setSubfolderOption(currentFolderKey, isNowChecked);
-    updateIconsBasedOnCheckboxState(isNowChecked);
-    };
-
-
-    statusInfo.textContent = `${fileTypes.length} file types`;
-  }
-}
-
-function updateIconsBasedOnCheckboxState(isChecked) {
-  const icons = document.querySelectorAll(".filetype-icon, .folder-icon");
-  const names = document.querySelectorAll(".filetype-name, .folder-name");
-
-  icons.forEach(icon => {
-    if (isChecked) {
-      if (icon.classList.contains("filetype-icon")) {
-        icon.classList.remove("fas", "fa-file", "filetype-icon");
-        icon.classList.add("fas", "fa-folder", "folder-icon");
-      }
-    } else {
-      if (icon.classList.contains("folder-icon")) {
-        icon.classList.remove("fas", "fa-folder", "folder-icon");
-        icon.classList.add("fas", "fa-file", "filetype-icon");
-      }
     }
   });
 
-  names.forEach(nameEl => {
-    const originalText = nameEl.textContent;
-    if (isChecked) {
-      nameEl.textContent = originalText.replace(/^\*\./, "");
-    } else {
-      if (!originalText.startsWith("*.")) {
-        nameEl.textContent = `*.${originalText}`;
-      }
-    }
+  // Render file types
+  fileTypes.forEach((fileType) => {
+    // For root, use null as folderKey
+    const folderKey =
+      currentPath.length > 0 ? currentPath[currentPath.length - 1] : null;
+    const fileTypeEl = createFileTypeElement(fileType, folderKey);
+    folderGrid.appendChild(fileTypeEl);
   });
+
+  statusInfo.textContent = `${folders.length} folders, ${fileTypes.length} file types`;
 }
-
-
 
 function createFolderElement(folderName, folderKey) {
   const folderEl = document.createElement("div");
@@ -340,13 +286,13 @@ function createFolderElement(folderName, folderKey) {
   folderEl.dataset.folderKey = folderKey;
 
   folderEl.innerHTML = `
-        <i class="fas fa-folder folder-icon"></i>
-        <span class="folder-name">${folderName}</span>
-    `;
+    <i class="fas fa-folder folder-icon"></i>
+    <span class="folder-name">${folderName}</span>
+  `;
 
   // Double click navigates
   folderEl.addEventListener("dblclick", () => {
-    navigateTo([folderKey]);
+    navigateTo([...currentPath, folderKey]);
   });
 
   return folderEl;
@@ -359,9 +305,9 @@ function createFileTypeElement(fileType, folderKey) {
   fileTypeEl.dataset.folderKey = folderKey;
 
   fileTypeEl.innerHTML = `
-        <i class="fas fa-file filetype-icon"></i>
-        <span class="filetype-name">*.${fileType}</span>
-    `;
+    <i class="fas fa-file filetype-icon"></i>
+    <span class="filetype-name">*.${fileType}</span>
+  `;
 
   return fileTypeEl;
 }
@@ -394,9 +340,8 @@ function renameFolder(folderKey) {
 
   // Save handler
   const saveRename = () => {
-
     const rawName = input.value.trim();
-    const newName = rawName.replace(/[^a-zA-Z0-9 ]/g, '');
+    const newName = rawName.replace(/[^a-zA-Z0-9 ]/g, "");
 
     if (newName) {
       StorageManager.renameFolder(folderKey, newName);
@@ -461,32 +406,48 @@ function navigateToPath(path) {
   if (pathSegments.length === 0) {
     navigateTo([]);
   } else {
-    // Convert first segment to folder key
-    const folderName = pathSegments[0];
-    const folderKey = Object.keys(StorageManager.folderVariables).find(
-      (key) => StorageManager.folderVariables[key] === folderName
-    );
+    // Convert path segments to folder keys
+    const newPath = [];
+    let currentContent = StorageManager.getFolderContent([]);
 
-    if (folderKey && StorageManager.rootFolders.includes(folderKey)) {
-      navigateTo([folderKey]);
-    } else {
-      navigateTo([]);
+    for (const segment of pathSegments) {
+      const folderKey = Object.keys(StorageManager.folderVariables).find(
+        (key) => StorageManager.folderVariables[key] === segment
+      );
+
+      if (folderKey && currentContent.folders.includes(folderKey)) {
+        newPath.push(folderKey);
+        currentContent = StorageManager.getFolderContent(newPath);
+      } else {
+        // Invalid path segment
+        navigateTo([]);
+        return;
+      }
     }
+
+    navigateTo(newPath);
   }
 }
 
 function createNewFolder() {
   const folderName = prompt("Enter folder name:", "New Folder");
   if (folderName && folderName.trim() !== "") {
-
     // Remove invalid characters
-    const cleanName = folderName.trim().replace(/[^a-zA-Z0-9 ]/g, '');
+    const cleanName = folderName.trim().replace(/[^a-zA-Z0-9 ]/g, "");
     if (cleanName) {
-      StorageManager.createNewFolder(cleanName).then(() => {
-      renderExplorer();
+      StorageManager.createNewFolder(cleanName, currentPath).then(() => {
+        renderExplorer();
       });
     } else {
-      alert("Invalid folder name. Please use only valid characters.");
+      alert("Invalid folder name. Please use only letters and numbers.");
     }
+  }
+}
+
+function handleFolderClick(e) {
+  const folderItem = e.target.closest(".folder-item");
+  if (folderItem) {
+    const folderKey = folderItem.dataset.folderKey;
+    navigateTo([...currentPath, folderKey]);
   }
 }
