@@ -98,7 +98,6 @@ body {
     font-size: 0.8125rem;
     cursor: pointer;
     border-radius: 3px;
-    transition: background 0.2s;
 }
 
 .menu-item:hover {
@@ -189,7 +188,6 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: border 0.2s;
     border: 1px solid transparent;
 }
 
@@ -219,14 +217,12 @@ body {
 
 .folder-item {
     padding: 10px;
-    border-radius: 5px;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
     border: 1px solid transparent;
-    transition: all 0.2s;
 }
 
 .folder-item:hover,
@@ -309,14 +305,12 @@ body {
 
 .file-type-item {
     padding: 10px;
-    border-radius: 5px;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
     border: 1px solid transparent;
-    transition: all 0.2s;
 }
 
 .file-type-item:hover {
