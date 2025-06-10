@@ -97,27 +97,22 @@ class StorageManager {
     await this.saveToStorage("folderVariables", this.folderVariables);
   }
 
+  // In StorageManager.js
   static async addFileType(folderKey, fileType) {
-    // Handle root file types
-    const targetKey = folderKey === null ? "root" : folderKey;
-
-    if (!this.customFileTypes[targetKey]) {
-      this.customFileTypes[targetKey] = [];
+    if (!this.customFileTypes[folderKey]) {
+      this.customFileTypes[folderKey] = [];
     }
-
-    if (!this.customFileTypes[targetKey].includes(fileType)) {
-      this.customFileTypes[targetKey].push(fileType);
+    if (!this.customFileTypes[folderKey].includes(fileType)) {
+      this.customFileTypes[folderKey].push(fileType);
       await this.saveToStorage("customFileTypes", this.customFileTypes);
     }
   }
 
   static async removeFileType(folderKey, fileType) {
-    const targetKey = folderKey === null ? "root" : folderKey;
-
-    if (this.customFileTypes[targetKey]) {
-      const index = this.customFileTypes[targetKey].indexOf(fileType);
+    if (this.customFileTypes[folderKey]) {
+      const index = this.customFileTypes[folderKey].indexOf(fileType);
       if (index !== -1) {
-        this.customFileTypes[targetKey].splice(index, 1);
+        this.customFileTypes[folderKey].splice(index, 1);
         await this.saveToStorage("customFileTypes", this.customFileTypes);
       }
     }

@@ -144,11 +144,12 @@ function showContextMenu(x, y, targetType) {
     deleteOption.className = "context-menu-item";
     deleteOption.textContent = "Delete";
     deleteOption.addEventListener("click", () => {
-      if (currentContextFolderKey && currentContextFileType) {
-        StorageManager.removeFileType(
-          currentContextFolderKey,
-          currentContextFileType
-        );
+      // Convert null to "root" for root file types
+      const targetKey =
+        currentContextFolderKey === "null" ? "root" : currentContextFolderKey;
+
+      if (targetKey && currentContextFileType) {
+        StorageManager.removeFileType(targetKey, currentContextFileType);
         renderExplorer();
         hideContextMenu();
       }
@@ -184,24 +185,21 @@ function showContextMenu(x, y, targetType) {
 function addNewFileType() {
   const fileType = prompt("Enter file type:", "png");
   if (fileType && fileType.trim() !== "") {
-    // Remove invalid characters and existing dots
     const cleanFileType = fileType
       .trim()
       .toLowerCase()
       .replace(/[^a-z0-9]/g, "");
     if (cleanFileType) {
-      // For root, use null as folderKey
+      // Use "root" for root folder key
       const folderKey =
-        currentPath.length > 0 ? currentPath[currentPath.length - 1] : null;
-      StorageManager.addFileType(folderKey, cleanFileType).then(() => {
-        renderExplorer();
-      });
+        currentPath.length > 0 ? currentPath[currentPath.length - 1] : "root";
+      StorageManager.addFileType(folderKey, cleanFileType);
+      renderExplorer();
     } else {
       alert("Please enter a valid file type (letters and numbers only)");
     }
   }
 }
-
 function hideContextMenu() {
   if (contextMenu) {
     contextMenu.style.display = "none";
@@ -270,9 +268,9 @@ async function renderExplorer() {
 
   // Render file types
   fileTypes.forEach((fileType) => {
-    // For root, use null as folderKey
+    // Use "root" for root folder key
     const folderKey =
-      currentPath.length > 0 ? currentPath[currentPath.length - 1] : null;
+      currentPath.length > 0 ? currentPath[currentPath.length - 1] : "root";
     const fileTypeEl = createFileTypeElement(fileType, folderKey);
     folderGrid.appendChild(fileTypeEl);
   });
@@ -302,7 +300,9 @@ function createFileTypeElement(fileType, folderKey) {
   const fileTypeEl = document.createElement("div");
   fileTypeEl.className = "file-type-item";
   fileTypeEl.dataset.fileType = fileType;
-  fileTypeEl.dataset.folderKey = folderKey;
+
+  // Use "root" for root folder key instead of null
+  fileTypeEl.dataset.folderKey = folderKey === null ? "root" : folderKey;
 
   fileTypeEl.innerHTML = `
     <i class="fas fa-file filetype-icon"></i>
