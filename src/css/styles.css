@@ -190,6 +190,7 @@ body {
     align-items: center;
     gap: 8px;
     transition: border 0.2s;
+    border: 1px solid transparent;
 }
 
 .sidebar-item.active {
