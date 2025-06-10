@@ -165,16 +165,14 @@ function showContextMenu(x, y, targetType) {
     });
     contextMenu.appendChild(addFolderOption);
 
-    if (currentPath.length > 0) {
-      const addFileTypeOption = document.createElement("div");
-      addFileTypeOption.className = "context-menu-item";
-      addFileTypeOption.textContent = "Add File Type";
-      addFileTypeOption.addEventListener("click", () => {
-        addNewFileType();
-        hideContextMenu();
-      });
-      contextMenu.appendChild(addFileTypeOption);
-    }
+    const addFileTypeOption = document.createElement("div");
+    addFileTypeOption.className = "context-menu-item";
+    addFileTypeOption.textContent = "Add File Type";
+    addFileTypeOption.addEventListener("click", () => {
+      addNewFileType();
+      hideContextMenu();
+    });
+    contextMenu.appendChild(addFileTypeOption);
   }
 
   // Position and show the menu
@@ -184,15 +182,20 @@ function showContextMenu(x, y, targetType) {
 }
 
 function addNewFileType() {
-  if (currentPath.length === 0) return;
-
   const fileType = prompt("Enter file type:", "png");
   if (fileType && fileType.trim() !== "") {
     // Remove invalid characters and existing dots
-    const cleanFileType = fileType.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+    const cleanFileType = fileType
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "");
     if (cleanFileType) {
-      StorageManager.addFileType(currentPath[currentPath.length-1], cleanFileType);
-      renderExplorer();
+      // For root, use null as folderKey
+      const folderKey =
+        currentPath.length > 0 ? currentPath[currentPath.length - 1] : null;
+      StorageManager.addFileType(folderKey, cleanFileType).then(() => {
+        renderExplorer();
+      });
     } else {
       alert("Please enter a valid file type (letters and numbers only)");
     }
@@ -257,7 +260,7 @@ async function renderExplorer() {
   folderGrid.innerHTML = "";
 
   // Render folders
-  folders.forEach(folderKey => {
+  folders.forEach((folderKey) => {
     const folderName = StorageManager.folderVariables[folderKey];
     if (folderName) {
       const folderEl = createFolderElement(folderName, folderKey);
@@ -266,8 +269,11 @@ async function renderExplorer() {
   });
 
   // Render file types
-  fileTypes.forEach(fileType => {
-    const fileTypeEl = createFileTypeElement(fileType, currentPath.length > 0 ? currentPath[currentPath.length-1] : null);
+  fileTypes.forEach((fileType) => {
+    // For root, use null as folderKey
+    const folderKey =
+      currentPath.length > 0 ? currentPath[currentPath.length - 1] : null;
+    const fileTypeEl = createFileTypeElement(fileType, folderKey);
     folderGrid.appendChild(fileTypeEl);
   });
 
@@ -335,7 +341,7 @@ function renameFolder(folderKey) {
   // Save handler
   const saveRename = () => {
     const rawName = input.value.trim();
-    const newName = rawName.replace(/[^a-zA-Z0-9 ]/g, '');
+    const newName = rawName.replace(/[^a-zA-Z0-9 ]/g, "");
 
     if (newName) {
       StorageManager.renameFolder(folderKey, newName);
@@ -403,12 +409,12 @@ function navigateToPath(path) {
     // Convert path segments to folder keys
     const newPath = [];
     let currentContent = StorageManager.getFolderContent([]);
-    
+
     for (const segment of pathSegments) {
       const folderKey = Object.keys(StorageManager.folderVariables).find(
         (key) => StorageManager.folderVariables[key] === segment
       );
-      
+
       if (folderKey && currentContent.folders.includes(folderKey)) {
         newPath.push(folderKey);
         currentContent = StorageManager.getFolderContent(newPath);
@@ -418,7 +424,7 @@ function navigateToPath(path) {
         return;
       }
     }
-    
+
     navigateTo(newPath);
   }
 }
@@ -427,7 +433,7 @@ function createNewFolder() {
   const folderName = prompt("Enter folder name:", "New Folder");
   if (folderName && folderName.trim() !== "") {
     // Remove invalid characters
-    const cleanName = folderName.trim().replace(/[^a-zA-Z0-9 ]/g, '');
+    const cleanName = folderName.trim().replace(/[^a-zA-Z0-9 ]/g, "");
     if (cleanName) {
       StorageManager.createNewFolder(cleanName, currentPath).then(() => {
         renderExplorer();
@@ -444,4 +450,4 @@ function handleFolderClick(e) {
     const folderKey = folderItem.dataset.folderKey;
     navigateTo([...currentPath, folderKey]);
   }
-} 
+}

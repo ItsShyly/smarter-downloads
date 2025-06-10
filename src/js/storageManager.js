@@ -6,7 +6,7 @@ class StorageManager {
     "folder4",
     "folderOthers",
   ];
-  
+
   static folderVariables = {
     folder1: "Audios",
     folder2: "Videos",
@@ -26,7 +26,18 @@ class StorageManager {
 
   static async initialize() {
     await this.loadFromStorage();
-    chrome.storage.local.onChanged.addListener(this.handleStorageChange.bind(this));
+    chrome.storage.local.onChanged.addListener(
+      this.handleStorageChange.bind(this)
+    );
+    // Initialize root file types if missing
+    if (this.customFileTypes.root === undefined) {
+      this.customFileTypes.root = [];
+      await this.saveToStorage("customFileTypes", this.customFileTypes);
+    }
+
+    chrome.storage.local.onChanged.addListener(
+      this.handleStorageChange.bind(this)
+    );
   }
 
   static async loadFromStorage() {
@@ -34,7 +45,7 @@ class StorageManager {
       "rootFolders",
       "folderVariables",
       "customFileTypes",
-      "customFolders"
+      "customFolders",
     ]);
 
     if (storageData.rootFolders) this.rootFolders = storageData.rootFolders;
@@ -87,20 +98,26 @@ class StorageManager {
   }
 
   static async addFileType(folderKey, fileType) {
-    if (!this.customFileTypes[folderKey]) {
-      this.customFileTypes[folderKey] = [];
+    // Handle root file types
+    const targetKey = folderKey === null ? "root" : folderKey;
+
+    if (!this.customFileTypes[targetKey]) {
+      this.customFileTypes[targetKey] = [];
     }
-    if (!this.customFileTypes[folderKey].includes(fileType)) {
-      this.customFileTypes[folderKey].push(fileType);
+
+    if (!this.customFileTypes[targetKey].includes(fileType)) {
+      this.customFileTypes[targetKey].push(fileType);
       await this.saveToStorage("customFileTypes", this.customFileTypes);
     }
   }
 
   static async removeFileType(folderKey, fileType) {
-    if (this.customFileTypes[folderKey]) {
-      const index = this.customFileTypes[folderKey].indexOf(fileType);
+    const targetKey = folderKey === null ? "root" : folderKey;
+
+    if (this.customFileTypes[targetKey]) {
+      const index = this.customFileTypes[targetKey].indexOf(fileType);
       if (index !== -1) {
-        this.customFileTypes[folderKey].splice(index, 1);
+        this.customFileTypes[targetKey].splice(index, 1);
         await this.saveToStorage("customFileTypes", this.customFileTypes);
       }
     }
@@ -108,14 +125,15 @@ class StorageManager {
 
   static async createNewFolder(folderName, parentPath = []) {
     const newKey = `folder_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-    
+
     // Initialize folder properties
     this.folderVariables[newKey] = folderName;
     await this.saveToStorage("folderVariables", this.folderVariables);
 
     // Add to parent folder or root
-    const parentKey = parentPath.length > 0 ? parentPath[parentPath.length - 1] : null;
-    
+    const parentKey =
+      parentPath.length > 0 ? parentPath[parentPath.length - 1] : null;
+
     if (parentKey) {
       if (!this.customFolders[parentKey]) {
         this.customFolders[parentKey] = [];
@@ -137,7 +155,7 @@ class StorageManager {
   static async removeFolder(folderKey) {
     // Remove from parent folder or root
     let removedFromParent = false;
-    
+
     // Check if it's in any custom folder
     for (const [parentKey, children] of Object.entries(this.customFolders)) {
       const index = children.indexOf(folderKey);
@@ -148,7 +166,7 @@ class StorageManager {
         break;
       }
     }
-    
+
     // If not found in custom folders, check root
     if (!removedFromParent) {
       const rootIndex = this.rootFolders.indexOf(folderKey);
@@ -160,23 +178,29 @@ class StorageManager {
 
     // Clean up properties
     const cleanupPromises = [];
-    
+
     if (this.folderVariables[folderKey]) {
       delete this.folderVariables[folderKey];
-      cleanupPromises.push(this.saveToStorage("folderVariables", this.folderVariables));
+      cleanupPromises.push(
+        this.saveToStorage("folderVariables", this.folderVariables)
+      );
     }
 
     if (this.customFileTypes[folderKey]) {
       delete this.customFileTypes[folderKey];
-      cleanupPromises.push(this.saveToStorage("customFileTypes", this.customFileTypes));
+      cleanupPromises.push(
+        this.saveToStorage("customFileTypes", this.customFileTypes)
+      );
     }
-    
+
     // Remove any child folders (recursive)
     if (this.customFolders[folderKey]) {
       const childFolders = [...this.customFolders[folderKey]];
       delete this.customFolders[folderKey];
-      cleanupPromises.push(this.saveToStorage("customFolders", this.customFolders));
-      
+      cleanupPromises.push(
+        this.saveToStorage("customFolders", this.customFolders)
+      );
+
       // Recursively remove children
       for (const childKey of childFolders) {
         cleanupPromises.push(this.removeFolder(childKey));
@@ -190,17 +214,16 @@ class StorageManager {
     if (path.length === 0) {
       return {
         folders: this.rootFolders,
-        fileTypes: []
+        fileTypes: this.customFileTypes.root || [],
       };
     }
-    
+
     const currentFolderKey = path[path.length - 1];
     return {
       folders: this.customFolders[currentFolderKey] || [],
-      fileTypes: this.customFileTypes[currentFolderKey] || []
+      fileTypes: this.customFileTypes[currentFolderKey] || [],
     };
   }
-
   static getFolderPath(folderKey) {
     // Find the path to a folder by searching through the hierarchy
     for (const [parentKey, children] of Object.entries(this.customFolders)) {
@@ -209,12 +232,12 @@ class StorageManager {
         return [...parentPath, folderKey];
       }
     }
-    
+
     // Check if it's a root folder
     if (this.rootFolders.includes(folderKey)) {
       return [folderKey];
     }
-    
+
     return []; // Not found
   }
 }
