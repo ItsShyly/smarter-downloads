@@ -443,11 +443,3 @@ function createNewFolder() {
     }
   }
 }
-
-function handleFolderClick(e) {
-  const folderItem = e.target.closest(".folder-item");
-  if (folderItem) {
-    const folderKey = folderItem.dataset.folderKey;
-    navigateTo([...currentPath, folderKey]);
-  }
-}
