@@ -5,43 +5,42 @@
  *Customize download paths based on file types with an easy to understand Windows Explorer interface.*
 
 >[!IMPORTANT]  
-> This extension cannot create folders outside your browser's configured default download directory 
-> e.g., C:\Users\[You]\Downloads
-> All organizational folders must be subdirectories within this location
-
+> This extension cannot create folders outside your browser's configured default download directory<br/> 
+> For example: C:\Users\[You]\Downloads<br/>
+> All organizational folders and rules must be subdirectories within this location
 
 
 ![banner](./src/assets/readme/banner.png)
 
-## What's New in v2.*
-**Complete Windows Explorer UI redesign** 
-- Kinda looks and works like the Windows File Explorer
+## What's New in v2
+**Complete Windows Explorer UI redesign**<br/> 
+Kinda looks and works like the Windows File Explorer
 
-**Visual folder navigation** 
-- Browse folders like in Windows Explorer
+**Visual folder navigation**<br/> 
+Browse folders like in Windows Explorer
 
-**Improved path switching** 
-- Faster and more reliable file sorting
+**Improved path switching**<br/> 
+Faster and more reliable file sorting
 
-**Simplified setup** 
-- Right-click context menus and intuitive controls
+**Simplified setup**<br/>
+Right-click context menus and intuitive controls
 
-**New code structure** 
-- Easier maintenance and future updates
+**New code structure**<br/>
+Easier maintenance and future updates
 
-**Create folders** 
-- Create folders or filetypes wherever you want and create your own rules
+**Create folders**<br/>
+Create folders or filetypes wherever you want and create your own rules
 
-## What's on my list?*
+## What's on my list?
 
-**Multiselect** 
-- Being able to select multiple files
+**Multiselect**<br/>
+Being able to select multiple files
 
-**Custom rules (general)** 
-- For example: different paths for different websites
+**Custom rules (general)**<br/>
+For example: different paths for different websites
 
-**Custom rules (filetypes)** 
-- For example: only save to a specific location if the name contains specific characters
+**Custom rules (filetypes)**<br/>
+For example: only save to a specific location if the name contains specific characters
 
 ## Usage
 
@@ -54,17 +53,9 @@
 2. The Windows File Explorer-style interface will open
 
 **Managing Download Paths:**
-- **Right-click on folders** to rename, edit,or delete the
-- **Double-click folders** to open and view their file types
-- **Right-click in empty space** to add new file type if in a folder
-- **Right-click in empty space** to add new folder if outside of a folder
-- **Toggle subfolders** using the switch in folder views
-
-**Key Features:**
-- Address bar shows and edits current download path
-- Visual feedback when paths change
-- Context menus matching Windows Explorer
-- Automatic saving on every change
+- **Right-click on folders** to rename, edit,or delete
+- **Double-click folders** to open the folder
+- **Right-click in empty space** to add a new folder or to add new file types, which are automatically saved to this location
 
 **Saving & Data:**
 - All settings auto-save locally after each change
