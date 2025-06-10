@@ -13,7 +13,7 @@
 
 ![banner](./src/assets/readme/banner.png)
 
-## What's New in v2.0
+## What's New in v2.*
 **Complete Windows Explorer UI redesign** 
 - Kinda looks and works like the Windows File Explorer
 
@@ -28,6 +28,20 @@
 
 **New code structure** 
 - Easier maintenance and future updates
+
+**Create folders** 
+- Create folders or filetypes wherever you want and create your own rules
+
+## What's on my list?*
+
+**Multiselect** 
+- Being able to select multiple files
+
+**Custom rules (general)** 
+- For example: different paths for different websites
+
+**Custom rules (filetypes)** 
+- For example: only save to a specific location if the name contains specific characters
 
 ## Usage
 
@@ -62,5 +76,5 @@
 ### Building
 ```bash
 npm install
-npm run build
 npm run dev
+npm run build
